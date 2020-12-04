@@ -117,7 +117,9 @@ public class Recipe {
     }
 
     public void setInputMaterial1Amount(String inputMaterial1Amount) {
-        this.inputMaterial1Amount = Double.parseDouble(inputMaterial1Amount);
+        if (!inputMaterial1Amount.equals("None")){
+            this.inputMaterial1Amount = Double.parseDouble(inputMaterial1Amount);
+        }
     }
 
     public double getInputMaterial2Amount() {
@@ -128,7 +130,6 @@ public class Recipe {
         if (!inputMaterial2Amount.equals("None")){
             this.inputMaterial2Amount = Double.parseDouble(inputMaterial2Amount);
         }
-
     }
 
     public double getInputMaterial3Amount() {

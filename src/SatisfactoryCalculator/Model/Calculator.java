@@ -57,54 +57,90 @@ public class Calculator {
         Map<Recipe, Integer> recipes = new HashMap<>();
         if (hasInputRecipe(recipe)){
             Vector<Recipe> temp1 = RecipeService.getAllDefaultRecipeOfItemByUUID(MaterialService.getMaterialByUUID(recipe.getInputMaterial1UUID()).getMaterialUUID());
-            addRecipeToMap(recipes, temp1, cnt);
-            if (hasUnderRecipe(temp1)){
-                for (Recipe value : temp1) {
-                    recipes.putAll(getInputRecipeOfRecipe(value, cnt + 1));
-                }
+            Recipe optimalRecipe1 = getOptimalRecipe(temp1);
+            addRecipeToMap(recipes, optimalRecipe1, cnt);
+            if (hasUnderRecipe(optimalRecipe1)){
+                recipes.putAll(getInputRecipeOfRecipe(optimalRecipe1, cnt + 1));
             }
-            if (recipe.getInputMaterial2UUID() != null){
+            if (recipe.getInputMaterial2UUID() != null && !recipe.getInputMaterial2UUID().equals("None")){
                 Vector<Recipe> temp2 = RecipeService.getAllDefaultRecipeOfItemByUUID(MaterialService.getMaterialByUUID(recipe.getInputMaterial2UUID()).getMaterialUUID());
-                addRecipeToMap(recipes, temp2, cnt);
-                if (hasUnderRecipe(temp2)){
-                    for (Recipe value : temp2) {
-                        recipes.putAll(getInputRecipeOfRecipe(value, cnt + 1));
-                    }
+                Recipe optimalRecipe2 = getOptimalRecipe(temp2);
+                addRecipeToMap(recipes, optimalRecipe2, cnt);
+                if (hasUnderRecipe(optimalRecipe2)){
+                    recipes.putAll(getInputRecipeOfRecipe(optimalRecipe2, cnt + 1));
                 }
             }
-            if (recipe.getInputMaterial3UUID() != null){
+            if (recipe.getInputMaterial3UUID() != null && !recipe.getInputMaterial3UUID().equals("None")){
                 Vector<Recipe> temp3 = RecipeService.getAllDefaultRecipeOfItemByUUID(MaterialService.getMaterialByUUID(recipe.getInputMaterial3UUID()).getMaterialUUID());
-                addRecipeToMap(recipes, temp3, cnt);
-                if (hasUnderRecipe(temp3)){
-                    for (Recipe value : temp3) {
-                        recipes.putAll(getInputRecipeOfRecipe(value, cnt + 1));
-                    }
+                Recipe optimalRecipe3 = getOptimalRecipe(temp3);
+                addRecipeToMap(recipes, optimalRecipe3, cnt);
+                if (hasUnderRecipe(optimalRecipe3)){
+                    recipes.putAll(getInputRecipeOfRecipe(optimalRecipe3, cnt + 1));
                 }
             }
-            if (recipe.getInputMaterial4UUID() != null){
+            if (recipe.getInputMaterial4UUID() != null && !recipe.getInputMaterial4UUID().equals("None")){
                 Vector<Recipe> temp4 = RecipeService.getAllDefaultRecipeOfItemByUUID(MaterialService.getMaterialByUUID(recipe.getInputMaterial4UUID()).getMaterialUUID());
-                addRecipeToMap(recipes, temp4, cnt);
-                if (hasUnderRecipe(temp4)){
-                    for (Recipe value : temp4) {
-                        recipes.putAll(getInputRecipeOfRecipe(value, cnt + 1));
-                    }
+                Recipe optimalRecipe4 = getOptimalRecipe(temp4);
+                addRecipeToMap(recipes, optimalRecipe4, cnt);
+                if (hasUnderRecipe(optimalRecipe4)){
+                    recipes.putAll(getInputRecipeOfRecipe(optimalRecipe4, cnt + 1));
                 }
             }
         }
         return recipes;
     }
 
-    private boolean hasUnderRecipe(Vector<Recipe> recipes){
-        for (Recipe recipe : recipes) {
-            if (RecipeService.isRecipe(recipe.getRecipeUUID())) return true;
+    private Recipe getOptimalRecipe(Vector<Recipe> tempVector){
+        if (tempVector.size() != 0){
+            int outAmount = 0;
+            int inAmount = 0;
+            int pos = 0;
+            for (int i = 0; i < tempVector.size(); i++) {
+                int tempOut = getAmountOut(tempVector.get(i));
+                if (outAmount > tempOut) {
+                    pos = i;
+                    outAmount = tempOut;
+                    int tempIn = getAmountIn(tempVector.get(i));
+                    if (inAmount > tempIn) {
+                        inAmount = tempIn;
+                        pos = i;
+                    }
+                }
+            }
+            return tempVector.get(pos);
+        }
+        return null;
+    }
+
+    private int getAmountIn(Recipe recipe){
+        int cnt = 1;
+        if (!recipe.getInputMaterial2UUID().equals("None")){
+            cnt++;
+            if (!recipe.getInputMaterial3UUID().equals("None")){
+                cnt++;
+                if (!recipe.getInputMaterial4UUID().equals("None")){
+                    cnt++;
+                }
+            }
+        }
+        return cnt;
+    }
+
+    private int getAmountOut(Recipe recipe){
+        int cnt = 1;
+        if (!recipe.getOutputMaterial2UUID().equals("None")) cnt++;
+        return cnt;
+    }
+
+    private boolean hasUnderRecipe(Recipe recipe){
+        if (recipe != null){
+            return RecipeService.isRecipe(recipe.getRecipeUUID());
         }
         return false;
     }
 
-    private void addRecipeToMap(Map<Recipe, Integer> recipeMap, Vector<Recipe> recipesVector, Integer cnt){
-        for (Recipe recipe : recipesVector) {
-            recipeMap.put(recipe, cnt);
-        }
+    private void addRecipeToMap(Map<Recipe, Integer> recipeMap, Recipe recipe, Integer cnt){
+        recipeMap.put(recipe, cnt);
     }
 
     private boolean hasInputRecipe(Recipe recipe){
@@ -112,89 +148,5 @@ public class Calculator {
         if (RecipeService.isRecipe(recipe.getInputMaterial2UUID())) return true;
         if (RecipeService.isRecipe(recipe.getInputMaterial3UUID())) return true;
         return RecipeService.isRecipe(recipe.getInputMaterial4UUID());
-    }
-
-    private Vector<Recipe> getInputRecipeOfRecipe(Recipe recipe) {
-        Vector<Recipe> temp1 = RecipeService.getAllDefaultRecipeOfItemByUUID(MaterialService.getMaterialByUUID(recipe.getInputMaterial1UUID()).getMaterialUUID());
-        Vector<Recipe> inputRecipe = new Vector<>(temp1);
-        if (recipe.getInputMaterial2UUID() != null) {
-            inputRecipe.addAll(RecipeService.getAllDefaultRecipeOfItemByUUID(MaterialService.getMaterialByUUID(recipe.getInputMaterial2UUID()).getMaterialUUID()));
-        }
-        if (recipe.getInputMaterial3UUID() != null) {
-            inputRecipe.addAll(RecipeService.getAllDefaultRecipeOfItemByUUID(MaterialService.getMaterialByUUID(recipe.getInputMaterial3UUID()).getMaterialUUID()));
-        }
-        if (recipe.getInputMaterial4UUID() != null) {
-            inputRecipe.addAll(RecipeService.getAllDefaultRecipeOfItemByUUID(MaterialService.getMaterialByUUID(recipe.getInputMaterial4UUID()).getMaterialUUID()));
-        }
-        return inputRecipe;
-    }
-
-    public Map<String, Integer> calculateNumbers() {
-        Map<String, Integer> data = new HashMap<>();
-        Material finalMaterial = MaterialService.getMaterialByName(materialName);
-        Vector<Recipe> recipes = RecipeService.getAllRecipeOfMaterialByUUID(finalMaterial.getMaterialUUID());
-        Recipe defaultRecipe = recipes.get(0);
-
-        System.out.println(defaultRecipe.toString());
-
-        double rate = materialAmountPerMinute / defaultRecipe.getOutputMaterial1Amount();
-        System.out.println(rate);
-
-        Vector<Recipe> allRecipesOfmaterial = getAllRecipesOfMaterial(defaultRecipe);
-        recipeOfmaterial(defaultRecipe);
-
-        return data;
-    }
-
-    private Vector<Recipe> getAllRecipesOfMaterial(Recipe recipe) {
-        int cnt = 0;
-        Vector<Recipe> allRecipes = new Vector<>();
-        Vector<String> recipeOfmaterial = new Vector<>();
-
-        return null;
-    }
-
-    private int getAmountOfInputRecipe(Recipe recipe) {
-        return 0;
-    }
-
-    private Vector<String> recipeOfmaterial(Recipe recipe) {
-        Vector<Recipe> recipeOfmaterial = new Vector<>();
-        Vector<String> materialUUIDsOfRecipe = cleanVectorOfmaterials(recipe);
-        Vector<Vector<Recipe>> temp = new Vector<>();
-
-        for (int i = 0; i < materialUUIDsOfRecipe.size(); i++) {
-            if (RecipeService.isRecipe(materialUUIDsOfRecipe.get(i))) {
-
-                //TODO return all recipes of material
-                temp.add(getAlUnderRecipe(materialUUIDsOfRecipe.get(i)));
-
-            }
-        }
-
-        System.out.println(materialUUIDsOfRecipe.toString());
-        System.out.println(temp.toString());
-
-        return null;
-    }
-
-    private Vector<Recipe> getAlUnderRecipe(String materialUUID) {
-        return RecipeService.getAllRecipeOfMaterialByUUID(materialUUID);
-    }
-
-    private Vector<String> cleanVectorOfmaterials(Recipe recipe) {
-        Vector<String> materialUUIDs = new Vector<>();
-        materialUUIDs.add(recipe.getInputMaterial1UUID());
-        materialUUIDs.add(recipe.getInputMaterial2UUID());
-        materialUUIDs.add(recipe.getInputMaterial3UUID());
-        materialUUIDs.add(recipe.getInputMaterial4UUID());
-        removeNoneFromVector(materialUUIDs);
-        return materialUUIDs;
-    }
-
-    private void removeNoneFromVector(Vector<String> inputVector) {
-        for (int i = 3; i > 0; i--) {
-            if (inputVector.get(i).equals("None")) inputVector.remove(i);
-        }
     }
 }
