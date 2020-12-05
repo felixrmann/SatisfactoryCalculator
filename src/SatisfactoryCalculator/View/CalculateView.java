@@ -53,6 +53,10 @@ public class CalculateView extends BorderPane {
         buttons = new Vector<>();
         calculateController = new CalculateController(mainFrame, buttons, this);
 
+        //TODO remove this
+        itemField.setText("Computer");
+        amountField.setText("123");
+
         buttons.add(calculateButton);
         buttons.add(backButton);
         buttons.add(exitButton);

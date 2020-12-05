@@ -1,15 +1,14 @@
 package SatisfactoryCalculator.View;
 
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
-import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -26,7 +25,6 @@ public class ExitConfirmView {
 
     private static boolean answer;
     private static Stage window;
-    private static Separator separator;
     private static Label textLabel;
     private static Button noButton, yesButton;
 
@@ -48,7 +46,6 @@ public class ExitConfirmView {
 
     private static void init(){
         window = new Stage();
-        separator = new Separator();
         textLabel = new Label();
         noButton = new Button();
         yesButton = new Button();
@@ -63,14 +60,14 @@ public class ExitConfirmView {
         borderPane.setCenter(textLabel);
         borderPane.setBottom(bottomPart());
         borderPane.setBackground(new Background(new BackgroundFill(Color.rgb(160,160,160), CornerRadii.EMPTY, Insets.EMPTY)));
+        borderPane.setPadding(new Insets(5,5,5,5));
         buttonAction();
 
         return borderPane;
     }
 
-    private static VBox bottomPart(){
-        VBox vBox = new VBox();
-        ToolBar toolBar = new ToolBar();
+    private static BorderPane bottomPart(){
+        BorderPane pane = new BorderPane();
 
         noButton.setText("No");
         yesButton.setText("Yes");
@@ -78,15 +75,10 @@ public class ExitConfirmView {
         noButton.setStyle("-fx-font-size: 15");
         yesButton.setStyle("-fx-font-size: 15");
 
-        separator.setPrefWidth(125);
+        pane.setRight(yesButton);
+        pane.setLeft(noButton);
 
-        ObservableList<Node> list = toolBar.getItems();
-        list.addAll(noButton, separator, yesButton);
-
-        vBox.setSpacing(30);
-        vBox.getChildren().addAll(toolBar);
-
-        return vBox;
+        return pane;
     }
 
     private static void buttonAction(){
