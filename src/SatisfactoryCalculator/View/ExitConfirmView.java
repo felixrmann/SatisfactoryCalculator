@@ -38,6 +38,7 @@ public class ExitConfirmView {
         }
         window.setTitle("Exit?");
         window.setScene(new Scene(windowContent(), 250, 100));
+        window.setAlwaysOnTop(true);
         window.centerOnScreen();
         window.showAndWait();
 

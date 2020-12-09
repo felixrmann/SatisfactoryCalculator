@@ -21,6 +21,8 @@ import java.util.Vector;
 
 public class MenuView extends BorderPane {
 
+    //TODO remove focus of all buttons in project
+
     private MainFrame mainFrame;
     private MenuController menuController;
     private GridPane gridPane;

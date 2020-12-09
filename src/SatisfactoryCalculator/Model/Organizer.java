@@ -23,15 +23,11 @@ public class Organizer {
         addRecipeToVector(bestRecipe, 0);
         getInputRecipeOfRecipe(bestRecipe, 1);
 
-        /*
         for (Orderer orderer : allRecipe) {
             System.out.println("Pos: " + orderer.getPosition());
             System.out.println("Inset: " + orderer.getInset());
             System.out.println("Recipe: " + orderer.getRecipe().toString());
         }
-
-         */
-
 
         return allRecipe;
     }
@@ -69,7 +65,6 @@ public class Organizer {
                 }
             }
         }
-
     }
 
     private static void addRecipeToVector(Recipe recipe, Integer inset){

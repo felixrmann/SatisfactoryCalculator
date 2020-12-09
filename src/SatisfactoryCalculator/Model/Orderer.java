@@ -23,6 +23,13 @@ public class Orderer {
         this.position = position;
     }
 
+    public Orderer(Recipe recipe, Double amount, Integer inset, Integer position){
+        this.recipe = recipe;
+        this.amount = amount;
+        this.inset = inset;
+        this.position = position;
+    }
+
     public Recipe getRecipe() {
         return recipe;
     }

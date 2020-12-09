@@ -22,24 +22,21 @@ public class Calculator {
         getAmountOfEachRecipe();
         getClaculatedAmountOfRecipe();
 
-        /*
-        for (Orderer orderer: amountOfRecipe) {
-            System.out.println("Amount: " + orderer.getAmount());
-            System.out.println("Position: " + orderer.getPosition());
-        }
 
-         */
+        for (Orderer orderer: amountOfRecipe) {
+            System.out.println("Name: " + orderer.getRecipe().getRecipeName());
+            System.out.println("Amount: " + orderer.getAmount());
+        }
 
         return null;
     }
 
 
     private static void getClaculatedAmountOfRecipe() {
-        for (int i = 0; i < allRecipe.size(); i++) {
-            double itemsPerMinute = allRecipe.get(i).getRecipe().getOutputMaterial1Amount();
-            if (isBos(allRecipe.get(i), allRecipe.get(i + 1)) && (i + 1) <= allRecipe.size()){
-                double nextItemsPerMinute = allRecipe.get(i + 1).getRecipe().getOutputMaterial1Amount();
-                //TODO calculate it
+        calculatedOfRecipe.add(new Orderer(amountOfRecipe.get(0).getAmount(), amountOfRecipe.get(0).getInset(), amountOfRecipe.get(0).getPosition()));
+        for (int i = 1; i < amountOfRecipe.size(); i++) {
+            if ((i+1) <= amountOfRecipe.size()){
+                //calculatedOfRecipe.add(new Orderer())
             }
         }
     }
@@ -66,7 +63,8 @@ public class Calculator {
     private static void getAmountOfEachRecipe(){
         for (Orderer orderer : allRecipe) {
             amountOfRecipe.add(new Orderer(
-                    orderer.getRecipe().getOutputMaterial1Amount(),
+                    orderer.getRecipe(),
+                    orderer.getRecipe().getInputMaterial1Amount(),
                     orderer.getInset(),
                     orderer.getPosition()));
         }

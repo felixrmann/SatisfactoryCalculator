@@ -53,4 +53,8 @@ public class MainFrame extends Application {
         boolean answer = ExitConfirmView.display();
         if (answer) window.close();
     }
+
+    public Stage getStage(){
+        return window;
+    }
 }
