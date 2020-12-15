@@ -57,7 +57,7 @@ public class Recipe {
     }
 
     public void setOutputMaterial1Amount(String outputMaterial1Amount) {
-        if (!outputMaterial1Amount.equals("None")){
+        if (!outputMaterial1Amount.equals("None") && !outputMaterial1Amount.equals("")){
             this.outputMaterial1Amount = Double.parseDouble(outputMaterial1Amount);
         }
     }
@@ -67,7 +67,7 @@ public class Recipe {
     }
 
     public void setOutputMaterial2Amount(String outputMaterial2Amount) {
-        if (!outputMaterial2Amount.equals("None")){
+        if (!outputMaterial2Amount.equals("None") && !outputMaterial2Amount.equals("")){
             this.outputMaterial2Amount = Double.parseDouble(outputMaterial2Amount);
         }
     }
@@ -77,7 +77,7 @@ public class Recipe {
     }
 
     public void setCraftTime(String craftTime) {
-        this.craftTime = Integer.parseInt(craftTime);
+        if (!craftTime.equals("")) this.craftTime = Integer.parseInt(craftTime);
     }
 
     public String getInputMaterial1UUID() {
@@ -117,7 +117,7 @@ public class Recipe {
     }
 
     public void setInputMaterial1Amount(String inputMaterial1Amount) {
-        if (!inputMaterial1Amount.equals("None")){
+        if (!inputMaterial1Amount.equals("None") && !inputMaterial1Amount.equals("")){
             this.inputMaterial1Amount = Double.parseDouble(inputMaterial1Amount);
         }
     }
@@ -127,7 +127,7 @@ public class Recipe {
     }
 
     public void setInputMaterial2Amount(String inputMaterial2Amount) {
-        if (!inputMaterial2Amount.equals("None")){
+        if (!inputMaterial2Amount.equals("None") && !inputMaterial2Amount.equals("")){
             this.inputMaterial2Amount = Double.parseDouble(inputMaterial2Amount);
         }
     }
@@ -137,7 +137,7 @@ public class Recipe {
     }
 
     public void setInputMaterial3Amount(String inputMaterial3Amount) {
-        if (!inputMaterial3Amount.equals("None")){
+        if (!inputMaterial3Amount.equals("None") && !inputMaterial3Amount.equals("")){
             this.inputMaterial3Amount = Double.parseDouble(inputMaterial3Amount);
         }
     }
@@ -147,7 +147,7 @@ public class Recipe {
     }
 
     public void setInputMaterial4Amount(String inputMaterial4Amount) {
-        if (!inputMaterial4Amount.equals("None")){
+        if (!inputMaterial4Amount.equals("None") && !inputMaterial4Amount.equals("")){
             this.inputMaterial4Amount = Double.parseDouble(inputMaterial4Amount);
         }
     }

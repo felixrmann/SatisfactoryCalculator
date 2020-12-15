@@ -12,7 +12,7 @@ import java.util.Map;
 public class MySqlDB {
 
     private static Connection connection = null;
-    private static String databaseName = "satisfactorydb"; //TODO ist schon geändert
+    private static String databaseName = "satisfactorydb";
     private static String url = "jdbc:mysql://localhost:3306/"+databaseName+"?serverTimezone=UTC&useLegacyDatetimeCode=falseuseSSL=true";
 
     private static String userName = "felix";
@@ -73,23 +73,11 @@ public class MySqlDB {
         }
     }
 
-    public static void setConnection(Connection connection) {
-        MySqlDB.connection = connection;
-    }
-
     public static PreparedStatement getPrepStmt() {
         return prepStmt;
     }
 
-    public static void setPrepStmt(PreparedStatement prepStmt) {
-        MySqlDB.prepStmt = prepStmt;
-    }
-
     public static ResultSet getResultSet() {
         return resultSet;
-    }
-
-    public static void setResultSet(ResultSet resultSet) {
-        MySqlDB.resultSet = resultSet;
     }
 }

@@ -27,9 +27,7 @@ public class RecipeView extends BorderPane {
     private MainFrame mainFrame;
     private Recipe selectedRecipe;
     private ListView<String> listView;
-    private Button editButton;
-    private Button backButton;
-    private Button exitButton;
+    private Button editButton, backButton, addButton, exitButton;
     private Separator separator;
     private Vector<Button> buttons;
     private RecipeController recipeController;
@@ -49,17 +47,20 @@ public class RecipeView extends BorderPane {
     private void init() {
         editButton = new Button();
         backButton = new Button();
+        addButton = new Button();
         exitButton = new Button();
         separator = new Separator();
         buttons = new Vector<>();
         recipeController = new RecipeController(mainFrame, buttons, this);
 
         buttons.add(editButton);
+        buttons.add(addButton);
         buttons.add(backButton);
         buttons.add(exitButton);
 
         editButton.setOnAction(recipeController);
         backButton.setOnAction(recipeController);
+        addButton.setOnAction(recipeController);
         exitButton.setOnAction(recipeController);
     }
 
@@ -100,12 +101,13 @@ public class RecipeView extends BorderPane {
 
         editButton.setText("Edit");
         backButton.setText("Back");
+        addButton.setText("Add");
         exitButton.setText("Exit");
 
-        separator.setPrefWidth(464);
+        separator.setPrefWidth(420);
 
         ObservableList<Node> list2 = toolBar.getItems();
-        list2.addAll(backButton, exitButton, separator, editButton);
+        list2.addAll(backButton, exitButton, separator, editButton, addButton);
 
         vBox.setSpacing(30);
         vBox.getChildren().addAll(toolBar);

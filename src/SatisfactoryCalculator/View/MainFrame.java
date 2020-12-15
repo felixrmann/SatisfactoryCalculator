@@ -50,7 +50,7 @@ public class MainFrame extends Application {
     }
 
     public void closeProgram(){
-        boolean answer = ExitConfirmView.display();
+        boolean answer = ConfirmView.display("Exit", "Do you want to exit the program?");
         if (answer) window.close();
     }
 

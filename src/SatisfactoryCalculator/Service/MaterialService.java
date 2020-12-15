@@ -2,11 +2,13 @@ package SatisfactoryCalculator.Service;
 
 import SatisfactoryCalculator.DataHandler.MySqlDB;
 import SatisfactoryCalculator.Model.Material;
+import SatisfactoryCalculator.Model.Result;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 import java.util.Vector;
 
 /**
@@ -16,6 +18,28 @@ import java.util.Vector;
  */
 
 public class MaterialService {
+
+    public static ResultSet executeSelect(String sqlQuery){
+        try {
+            Connection connection = MySqlDB.getConnection();
+            PreparedStatement prepStmt = connection.prepareStatement(sqlQuery);
+            return prepStmt.executeQuery();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static int executeUpdate(String sqlQuery){
+        try {
+            Connection connection = MySqlDB.getConnection();
+            PreparedStatement prepStmt = connection.prepareStatement(sqlQuery);
+            return prepStmt.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
+    }
 
     public static Vector<Material> getAllMaterial(){
         Connection connection;
@@ -40,15 +64,34 @@ public class MaterialService {
         return allMaterial;
     }
 
+    public static Result saveChanges(Material material){
+        String sqlQuery = "UPDATE material " +
+                "SET materialName='" + material.getMaterialName() + "', " +
+                "WHERE materialUUID='" + material.getMaterialUUID() + "'";
+        int rowsAffected = executeUpdate(sqlQuery);
+
+        if (rowsAffected == 1) return Result.SUCCESS;
+        else if (rowsAffected == 0) return Result.NOACTION;
+        else return Result.ERROR;
+    }
+
+    public static Result saveNew(Material material){
+        String sqlQuery = "INSERT INTO material " +
+                "(materialUUID, materialName) " +
+                "VALUES " +
+                "('" + UUID.randomUUID().toString() + "', " +
+                "'" + material.getMaterialName() + "')";
+        int rowsAffected = executeUpdate(sqlQuery);
+
+        if (rowsAffected == 1) return Result.SUCCESS;
+        else if (rowsAffected == 0) return Result.NOACTION;
+        else return Result.ERROR;
+    }
+
     private static Material getMaterial(String sqlQuery){
-        Connection connection;
-        PreparedStatement prepStmt;
-        ResultSet resultSet;
         Material material = new Material();
         try {
-            connection = MySqlDB.getConnection();
-            prepStmt = connection.prepareStatement(sqlQuery);
-            resultSet = prepStmt.executeQuery();
+            ResultSet resultSet = executeSelect(sqlQuery);
             while (resultSet.next()){
                 setValues(resultSet, material);
             }

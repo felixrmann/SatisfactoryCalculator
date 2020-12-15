@@ -1,10 +1,10 @@
 package SatisfactoryCalculator.Model;
 
 public enum Result {
-    SUCCESS(0), // command was successfully executed
-    NOACTION(1), // nothing to be done
-    DUPLICATE(4), // duplicate entry in database
-    ERROR(9); // there was an error => throw exception
+    SUCCESS(0),
+    NOACTION(1),
+    DUPLICATE(2),
+    ERROR(3);
 
     private int code;
 
@@ -12,10 +12,6 @@ public enum Result {
         this.setCode(code);
     }
 
-    /**
-     * @param code
-     *            the code to set
-     */
     public void setCode(int code) {
         this.code = code;
     }

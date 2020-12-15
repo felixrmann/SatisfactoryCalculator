@@ -18,17 +18,20 @@ import java.io.FileNotFoundException;
 /**
  * @author Felix Mann
  * @version 1.0
- * @since 2020-November-14
+ * @since 2020-Dezember-11
  */
 
-public class ExitConfirmView {
+public class ConfirmView {
 
     private static boolean answer;
     private static Stage window;
     private static Label textLabel;
     private static Button noButton, yesButton;
+    private static String text;
 
-    public static boolean display(){
+    public static boolean display(String title, String text){
+        ConfirmView.text = text;
+
         init();
 
         try {
@@ -36,7 +39,7 @@ public class ExitConfirmView {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        window.setTitle("Exit?");
+        window.setTitle(title);
         window.setScene(new Scene(windowContent(), 250, 100));
         window.setAlwaysOnTop(true);
         window.centerOnScreen();
@@ -45,7 +48,7 @@ public class ExitConfirmView {
         return answer;
     }
 
-    private static void init(){
+    private static void init() {
         window = new Stage();
         textLabel = new Label();
         noButton = new Button();
@@ -55,11 +58,11 @@ public class ExitConfirmView {
     private static BorderPane windowContent(){
         BorderPane borderPane = new BorderPane();
 
-        textLabel.setText("Do you want to exit the program?");
+        textLabel.setText("Save the changes?");
         textLabel.setStyle("-fx-font-size: 15");
 
         borderPane.setCenter(textLabel);
-        borderPane.setBottom(bottomPart());
+        borderPane.setBottom(botPart());
         borderPane.setBackground(new Background(new BackgroundFill(Color.rgb(160,160,160), CornerRadii.EMPTY, Insets.EMPTY)));
         borderPane.setPadding(new Insets(5,5,5,5));
         buttonAction();
@@ -67,8 +70,8 @@ public class ExitConfirmView {
         return borderPane;
     }
 
-    private static BorderPane bottomPart(){
-        BorderPane pane = new BorderPane();
+    private static BorderPane botPart() {
+        BorderPane borderPane = new BorderPane();
 
         noButton.setText("No");
         yesButton.setText("Yes");
@@ -76,13 +79,13 @@ public class ExitConfirmView {
         noButton.setStyle("-fx-font-size: 15");
         yesButton.setStyle("-fx-font-size: 15");
 
-        pane.setRight(yesButton);
-        pane.setLeft(noButton);
+        borderPane.setLeft(noButton);
+        borderPane.setRight(yesButton);
 
-        return pane;
+        return borderPane;
     }
 
-    private static void buttonAction(){
+    private static void buttonAction() {
         noButton.setOnAction(event -> {
             answer = false;
             window.close();
