@@ -4,7 +4,7 @@ import SatisfactoryCalculator.Model.Recipe;
 import SatisfactoryCalculator.View.EditView;
 import SatisfactoryCalculator.View.MainFrame;
 import SatisfactoryCalculator.View.MenuView;
-import SatisfactoryCalculator.View.RecipeView;
+import SatisfactoryCalculator.View.SectorView;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -21,9 +21,9 @@ public class RecipeController implements EventHandler<ActionEvent> {
 
     private MainFrame mainFrame;
     private Vector<Button> buttons;
-    private RecipeView recipeView;
+    private SectorView recipeView;
 
-    public RecipeController(MainFrame mainFrame, Vector<Button> buttons, RecipeView recipeView){
+    public RecipeController(MainFrame mainFrame, Vector<Button> buttons, SectorView recipeView){
         this.mainFrame = mainFrame;
         this.buttons = buttons;
         this.recipeView = recipeView;

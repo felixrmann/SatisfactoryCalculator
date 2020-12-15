@@ -1,6 +1,6 @@
 package SatisfactoryCalculator.Model;
 
-import SatisfactoryCalculator.Service.MaterialService;
+import SatisfactoryCalculator.Service.ItemService;
 import SatisfactoryCalculator.Service.RecipeService;
 
 import java.util.Vector;
@@ -15,9 +15,9 @@ public class Organizer {
     private static int globalCount = 0;
     private static Vector<Orderer> allRecipe = new Vector<>();
 
-    public static Vector<Orderer> getAllRecipeOfMaterial(String materialName){
-        Material searchMaterial = MaterialService.getMaterialByName(materialName);
-        Vector<Recipe> defaultRecipes = RecipeService.getAllDefaultRecipeOfItemByUUID(searchMaterial.getMaterialUUID());
+    public static Vector<Orderer> getAllRecipeOfMaterial(String itemName){
+        Item searchItem = ItemService.getItemByName(itemName);
+        Vector<Recipe> defaultRecipes = RecipeService.getAllDefaultRecipeOfItemByUUID(searchItem.getItemUUID());
         Recipe bestRecipe = getOptimalRecipe(defaultRecipes);
 
         addRecipeToVector(bestRecipe, 0);
@@ -34,14 +34,14 @@ public class Organizer {
 
     private static void getInputRecipeOfRecipe(Recipe recipe, Integer cnt){
         if (hasInputRecipe(recipe)){
-            Vector<Recipe> temp1 = RecipeService.getAllDefaultRecipeOfItemByUUID(MaterialService.getMaterialByUUID(recipe.getInputMaterial1UUID()).getMaterialUUID());
+            Vector<Recipe> temp1 = RecipeService.getAllDefaultRecipeOfItemByUUID(ItemService.getItemByUUID(recipe.getInputMaterial1UUID()).getItemUUID());
             Recipe optimalRecipe1 = getOptimalRecipe(temp1);
             addRecipeToVector(optimalRecipe1, cnt);
             if (hasUnderRecipe(optimalRecipe1)){
                 getInputRecipeOfRecipe(optimalRecipe1, cnt + 1);
             }
             if (recipe.getInputMaterial2UUID() != null && !recipe.getInputMaterial2UUID().equals("None")){
-                Vector<Recipe> temp2 = RecipeService.getAllDefaultRecipeOfItemByUUID(MaterialService.getMaterialByUUID(recipe.getInputMaterial2UUID()).getMaterialUUID());
+                Vector<Recipe> temp2 = RecipeService.getAllDefaultRecipeOfItemByUUID(ItemService.getItemByUUID(recipe.getInputMaterial2UUID()).getItemUUID());
                 Recipe optimalRecipe2 = getOptimalRecipe(temp2);
                 addRecipeToVector(optimalRecipe2, cnt);
                 if (hasUnderRecipe(optimalRecipe2)){
@@ -49,7 +49,7 @@ public class Organizer {
                 }
             }
             if (recipe.getInputMaterial3UUID() != null && !recipe.getInputMaterial3UUID().equals("None")){
-                Vector<Recipe> temp3 = RecipeService.getAllDefaultRecipeOfItemByUUID(MaterialService.getMaterialByUUID(recipe.getInputMaterial3UUID()).getMaterialUUID());
+                Vector<Recipe> temp3 = RecipeService.getAllDefaultRecipeOfItemByUUID(ItemService.getItemByUUID(recipe.getInputMaterial3UUID()).getItemUUID());
                 Recipe optimalRecipe3 = getOptimalRecipe(temp3);
                 addRecipeToVector(optimalRecipe3, cnt);
                 if (hasUnderRecipe(optimalRecipe3)){
@@ -57,7 +57,7 @@ public class Organizer {
                 }
             }
             if (recipe.getInputMaterial4UUID() != null && !recipe.getInputMaterial4UUID().equals("None")){
-                Vector<Recipe> temp4 = RecipeService.getAllDefaultRecipeOfItemByUUID(MaterialService.getMaterialByUUID(recipe.getInputMaterial4UUID()).getMaterialUUID());
+                Vector<Recipe> temp4 = RecipeService.getAllDefaultRecipeOfItemByUUID(ItemService.getItemByUUID(recipe.getInputMaterial4UUID()).getItemUUID());
                 Recipe optimalRecipe4 = getOptimalRecipe(temp4);
                 addRecipeToVector(optimalRecipe4, cnt);
                 if (hasUnderRecipe(optimalRecipe4)){

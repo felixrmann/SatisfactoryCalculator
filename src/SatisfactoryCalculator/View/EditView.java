@@ -2,7 +2,7 @@ package SatisfactoryCalculator.View;
 
 import SatisfactoryCalculator.Model.Recipe;
 import SatisfactoryCalculator.Service.BuildingService;
-import SatisfactoryCalculator.Service.MaterialService;
+import SatisfactoryCalculator.Service.ItemService;
 import SatisfactoryCalculator.Service.RecipeService;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -44,6 +44,7 @@ public class EditView {
         EditView.param = param;
 
         init();
+        initTextField();
         setData();
 
         try {
@@ -62,39 +63,6 @@ public class EditView {
         window.showAndWait();
 
         //TODO close only if nothing changed
-    }
-
-    private static void setData(){
-        nameInField.setText(editRecipe.getRecipeName());
-        if (editRecipe.getCraftTime() != 0) craftTimeIn.setText(String.valueOf(editRecipe.getCraftTime()));
-        if (editRecipe.isAltRecipe()) altRecipeButton.setSelected(true);
-        if (editRecipe.getBuildingUUID() != null){
-            buildingField.setText(BuildingService.getBuildingByUUID(editRecipe.getBuildingUUID()).getBuildingName());
-        }
-        if (editRecipe.getOutputMaterial1UUID() != null && editRecipe.getOutputMaterial1UUID().equals("None")){
-            outMatName1.setText(MaterialService.getMaterialByUUID(editRecipe.getOutputMaterial1UUID()).getMaterialName());
-            outMatAmnt1.setText(String.valueOf(editRecipe.getOutputMaterial1Amount()));
-        }
-        if (editRecipe.getOutputMaterial2UUID() != null && editRecipe.getOutputMaterial2UUID().equals("None")){
-            outMatName2.setText(MaterialService.getMaterialByUUID(editRecipe.getOutputMaterial2UUID()).getMaterialName());
-            outMatAmnt2.setText(String.valueOf(editRecipe.getOutputMaterial2Amount()));
-        }
-        if (editRecipe.getInputMaterial1UUID() != null && !editRecipe.getInputMaterial1UUID().equals("None")){
-            inMatName1.setText(MaterialService.getMaterialByUUID(editRecipe.getInputMaterial1UUID()).getMaterialName());
-            inMatAmnt1.setText(String.valueOf(editRecipe.getInputMaterial1Amount()));
-        }
-        if (editRecipe.getInputMaterial2UUID() != null && !editRecipe.getInputMaterial2UUID().equals("None")){
-            inMatName2.setText(MaterialService.getMaterialByUUID(editRecipe.getInputMaterial2UUID()).getMaterialName());
-            inMatAmnt2.setText(String.valueOf(editRecipe.getInputMaterial2Amount()));
-        }
-        if (editRecipe.getInputMaterial3UUID() != null && !editRecipe.getInputMaterial3UUID().equals("None")){
-            inMatName3.setText(MaterialService.getMaterialByUUID(editRecipe.getInputMaterial3UUID()).getMaterialName());
-            inMatAmnt3.setText(String.valueOf(editRecipe.getInputMaterial3Amount()));
-        }
-        if (editRecipe.getInputMaterial4UUID() != null && !editRecipe.getInputMaterial4UUID().equals("None")){
-            inMatName4.setText(MaterialService.getMaterialByUUID(editRecipe.getInputMaterial4UUID()).getMaterialName());
-            inMatAmnt4.setText(String.valueOf(editRecipe.getInputMaterial4Amount()));
-        }
     }
 
     private static void init() {
@@ -139,6 +107,69 @@ public class EditView {
         separator = new Separator();
 
         setAction();
+    }
+
+    private static void setAction(){
+        backButton.setOnAction(event -> {
+            window.close();
+        });
+        saveButton.setOnAction(event -> {
+            boolean answer = ConfirmView.display("Save", "Save Changes?");
+            if (!answer) window.close();
+            else {
+                if (param.equals("a")) {
+                    RecipeService.saveNew(getInputs());
+                } else if (hasChanged()) {
+                    RecipeService.saveChanges(getInputs());
+                }
+                window.close();
+            }
+        });
+        deleteButton.setOnAction(event -> {
+            boolean answer = ConfirmView.display("Delete", "Delete this Recipe?");
+            if (!answer) window.close();
+            else {
+                RecipeService.delete(editRecipe);
+                window.close();
+            }
+        });
+    }
+
+    private static void initTextField() {
+
+    }
+
+    private static void setData(){
+        nameInField.setText(editRecipe.getRecipeName());
+        if (editRecipe.getCraftTime() != 0) craftTimeIn.setText(String.valueOf(editRecipe.getCraftTime()));
+        if (editRecipe.isAltRecipe()) altRecipeButton.setSelected(true);
+        if (editRecipe.getBuildingUUID() != null){
+            buildingField.setText(BuildingService.getBuildingByUUID(editRecipe.getBuildingUUID()).getBuildingName());
+        }
+        if (editRecipe.getOutputMaterial1UUID() != null && !editRecipe.getOutputMaterial1UUID().equals("None")){
+            outMatName1.setText(ItemService.getItemByUUID(editRecipe.getOutputMaterial1UUID()).getItemName());
+            outMatAmnt1.setText(String.valueOf(editRecipe.getOutputMaterial1Amount()));
+        }
+        if (editRecipe.getOutputMaterial2UUID() != null && !editRecipe.getOutputMaterial2UUID().equals("None")){
+            outMatName2.setText(ItemService.getItemByUUID(editRecipe.getOutputMaterial2UUID()).getItemName());
+            outMatAmnt2.setText(String.valueOf(editRecipe.getOutputMaterial2Amount()));
+        }
+        if (editRecipe.getInputMaterial1UUID() != null && !editRecipe.getInputMaterial1UUID().equals("None")){
+            inMatName1.setText(ItemService.getItemByUUID(editRecipe.getInputMaterial1UUID()).getItemName());
+            inMatAmnt1.setText(String.valueOf(editRecipe.getInputMaterial1Amount()));
+        }
+        if (editRecipe.getInputMaterial2UUID() != null && !editRecipe.getInputMaterial2UUID().equals("None")){
+            inMatName2.setText(ItemService.getItemByUUID(editRecipe.getInputMaterial2UUID()).getItemName());
+            inMatAmnt2.setText(String.valueOf(editRecipe.getInputMaterial2Amount()));
+        }
+        if (editRecipe.getInputMaterial3UUID() != null && !editRecipe.getInputMaterial3UUID().equals("None")){
+            inMatName3.setText(ItemService.getItemByUUID(editRecipe.getInputMaterial3UUID()).getItemName());
+            inMatAmnt3.setText(String.valueOf(editRecipe.getInputMaterial3Amount()));
+        }
+        if (editRecipe.getInputMaterial4UUID() != null && !editRecipe.getInputMaterial4UUID().equals("None")){
+            inMatName4.setText(ItemService.getItemByUUID(editRecipe.getInputMaterial4UUID()).getItemName());
+            inMatAmnt4.setText(String.valueOf(editRecipe.getInputMaterial4Amount()));
+        }
     }
 
     private static BorderPane windowContent(){
@@ -311,31 +342,5 @@ public class EditView {
     private static String getSelectedAltRecipe(){
         if (altRecipeButton.isSelected()) return "true";
         else return "false";
-    }
-
-    private static void setAction(){
-        backButton.setOnAction(event -> {
-            window.close();
-        });
-        saveButton.setOnAction(event -> {
-            boolean answer = ConfirmView.display("Save", "Save Changes?");
-            if (!answer) window.close();
-            else {
-                if (param.equals("a")) {
-                    RecipeService.saveNew(getInputs());
-                } else if (hasChanged()) {
-                    RecipeService.saveChanges(getInputs());
-                }
-                window.close();
-            }
-        });
-        deleteButton.setOnAction(event -> {
-            boolean answer = ConfirmView.display("Delete", "Delete this Recipe?");
-            if (!answer) window.close();
-            else {
-                RecipeService.delete(editRecipe);
-                window.close();
-            }
-        });
     }
 }

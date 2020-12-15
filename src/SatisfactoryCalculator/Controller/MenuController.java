@@ -26,9 +26,9 @@ public class MenuController implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent event) {
         if (buttons.get(0).equals(event.getSource())) mainFrame.setNewScene(new CalculateView(mainFrame), 800, 800);
-        else if (buttons.get(1).equals(event.getSource())) mainFrame.setNewScene(new ItemView(), 600, 600);
-        else if (buttons.get(2).equals(event.getSource())) mainFrame.setNewScene(new RecipeView(mainFrame), 600, 600);
-        else if (buttons.get(3).equals(event.getSource())) mainFrame.setNewScene(new BuildingView(), 600, 600);
+        else if (buttons.get(1).equals(event.getSource())) mainFrame.setNewScene(new SectorView(mainFrame, "item"), 600, 600);
+        else if (buttons.get(2).equals(event.getSource())) mainFrame.setNewScene(new SectorView(mainFrame, "recipe"), 600, 600);
+        else if (buttons.get(3).equals(event.getSource())) mainFrame.setNewScene(new SectorView(mainFrame, "building"), 600, 600);
         else if (buttons.get(4).equals(event.getSource())) mainFrame.closeProgram();
     }
 }

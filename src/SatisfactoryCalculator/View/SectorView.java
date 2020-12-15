@@ -22,9 +22,10 @@ import java.util.Vector;
  * @since 2020-November-14
  */
 
-public class RecipeView extends BorderPane {
+public class SectorView extends BorderPane {
 
     private MainFrame mainFrame;
+    private String sector;
     private Recipe selectedRecipe;
     private ListView<String> listView;
     private Button editButton, backButton, addButton, exitButton;
@@ -32,12 +33,12 @@ public class RecipeView extends BorderPane {
     private Vector<Button> buttons;
     private RecipeController recipeController;
 
-    public RecipeView(MainFrame mainFrame){
+    public SectorView(MainFrame mainFrame, String sector){
         this.mainFrame = mainFrame;
+        this.sector = sector;
 
         init();
 
-        setTop(topPart());
         setCenter(centerPart());
         setBottom(botPart());
 
@@ -62,13 +63,6 @@ public class RecipeView extends BorderPane {
         backButton.setOnAction(recipeController);
         addButton.setOnAction(recipeController);
         exitButton.setOnAction(recipeController);
-    }
-
-    private VBox topPart(){
-        VBox vBox = new VBox();
-        ToolBar toolBar = new ToolBar();
-
-        return vBox;
     }
 
     private VBox centerPart(){

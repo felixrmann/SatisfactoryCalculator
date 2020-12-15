@@ -1,7 +1,7 @@
 package SatisfactoryCalculator.Service;
 
 import SatisfactoryCalculator.DataHandler.MySqlDB;
-import SatisfactoryCalculator.Model.Material;
+import SatisfactoryCalculator.Model.Item;
 import SatisfactoryCalculator.Model.Result;
 
 import java.sql.Connection;
@@ -17,7 +17,7 @@ import java.util.Vector;
  * @since 2020-November-11
  */
 
-public class MaterialService {
+public class ItemService {
 
     public static ResultSet executeSelect(String sqlQuery){
         try {
@@ -41,33 +41,33 @@ public class MaterialService {
         return 0;
     }
 
-    public static Vector<Material> getAllMaterial(){
+    public static Vector<Item> getAllItem(){
         Connection connection;
         PreparedStatement prepStmt;
         ResultSet resultSet;
-        Vector<Material> allMaterial = new Vector<>();
-        String sqlQuery = "SELECT materialName, materialUUID FROM material";
+        Vector<Item> allItem = new Vector<>();
+        String sqlQuery = "SELECT itemName, itemUUID FROM item";
         try {
             connection = MySqlDB.getConnection();
             prepStmt = connection.prepareStatement(sqlQuery);
             resultSet = prepStmt.executeQuery();
             while (resultSet.next()){
-                Material material = new Material();
-                setValues(resultSet, material);
-                allMaterial.add(material);
+                Item item = new Item();
+                setValues(resultSet, item);
+                allItem.add(item);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
             MySqlDB.sqlClose();
         }
-        return allMaterial;
+        return allItem;
     }
 
-    public static Result saveChanges(Material material){
-        String sqlQuery = "UPDATE material " +
-                "SET materialName='" + material.getMaterialName() + "', " +
-                "WHERE materialUUID='" + material.getMaterialUUID() + "'";
+    public static Result saveChanges(Item item){
+        String sqlQuery = "UPDATE item " +
+                "SET itemName='" + item.getItemName() + "', " +
+                "WHERE itemUUID='" + item.getItemUUID() + "'";
         int rowsAffected = executeUpdate(sqlQuery);
 
         if (rowsAffected == 1) return Result.SUCCESS;
@@ -75,12 +75,12 @@ public class MaterialService {
         else return Result.ERROR;
     }
 
-    public static Result saveNew(Material material){
-        String sqlQuery = "INSERT INTO material " +
-                "(materialUUID, materialName) " +
+    public static Result saveNew(Item item){
+        String sqlQuery = "INSERT INTO item " +
+                "(itemUUID, itemName) " +
                 "VALUES " +
                 "('" + UUID.randomUUID().toString() + "', " +
-                "'" + material.getMaterialName() + "')";
+                "'" + item.getItemName() + "')";
         int rowsAffected = executeUpdate(sqlQuery);
 
         if (rowsAffected == 1) return Result.SUCCESS;
@@ -88,35 +88,35 @@ public class MaterialService {
         else return Result.ERROR;
     }
 
-    private static Material getMaterial(String sqlQuery){
-        Material material = new Material();
+    private static Item getItem(String sqlQuery){
+        Item item = new Item();
         try {
             ResultSet resultSet = executeSelect(sqlQuery);
             while (resultSet.next()){
-                setValues(resultSet, material);
+                setValues(resultSet, item);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
             MySqlDB.sqlClose();
         }
-        return material;
+        return item;
     }
 
-    public static Material getMaterialByName(String materialName){
-        String sqlQuery = "SELECT materialName, materialUUID FROM material " +
-                "WHERE materialName='"+materialName+"'";
-        return getMaterial(sqlQuery);
+    public static Item getItemByName(String itemName){
+        String sqlQuery = "SELECT itemName, itemUUID FROM item " +
+                "WHERE itemName='"+itemName+"'";
+        return getItem(sqlQuery);
     }
 
-    public static Material getMaterialByUUID(String materialUUID){
-        String sqlQuery = "SELECT materialName, materialUUID FROM material " +
-                "WHERE materialUUID='"+materialUUID+"'";
-        return getMaterial(sqlQuery);
+    public static Item getItemByUUID(String itemUUID){
+        String sqlQuery = "SELECT itemName, itemUUID FROM item " +
+                "WHERE itemUUID='"+itemUUID+"'";
+        return getItem(sqlQuery);
     }
 
-    private static void setValues(ResultSet resultSet, Material material) throws SQLException {
-        material.setMaterialUUID(resultSet.getString("materialUUID"));
-        material.setMaterialName(resultSet.getString("materialName"));
+    private static void setValues(ResultSet resultSet, Item item) throws SQLException {
+        item.setItemUUID(resultSet.getString("itemUUID"));
+        item.setItemName(resultSet.getString("itemName"));
     }
 }
