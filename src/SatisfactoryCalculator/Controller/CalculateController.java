@@ -1,6 +1,7 @@
 package SatisfactoryCalculator.Controller;
 
 import SatisfactoryCalculator.Model.Calculator;
+import SatisfactoryCalculator.Model.Orderer;
 import SatisfactoryCalculator.Model.Organizer;
 import SatisfactoryCalculator.View.CalculateView;
 import SatisfactoryCalculator.View.MainFrame;
@@ -33,11 +34,9 @@ public class CalculateController implements EventHandler<ActionEvent> {
     public void handle(ActionEvent event) {
         if (buttons.get(0).equals(event.getSource())) {
             if (!calculateView.getAmountFieldText().equals("") && !calculateView.getItemFieldText().equals("")){
-                Calculator.getRecipeAmount(Organizer.getAllRecipeOfMaterial(calculateView.getItemFieldText()), 20);
-                //Calculator calculator = new Calculator(calculateView, calculateView.getItemFieldText(), Integer.parseInt(calculateView.getAmountFieldText()));
-                //Map<Recipe, Integer> data = calculator.allRecipesOfMaterial();
-
-                //data.forEach((key, value) -> System.out.println(key + " " + value));
+                Calculator calculator = new Calculator();
+                Vector<Orderer> allRecipe = calculator.getRecipeAmount(Organizer.getAllRecipeOfMaterial(calculateView.getItemFieldText()), Double.valueOf(calculateView.getAmountFieldText()));
+                calculateView.centerPart(allRecipe);
             }
         }
         else if (buttons.get(1).equals(event.getSource())) mainFrame.setNewScene(new MenuView(mainFrame), 350, 429);

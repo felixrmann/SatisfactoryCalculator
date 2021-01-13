@@ -58,7 +58,7 @@ public class ConfirmView {
     private static BorderPane windowContent(){
         BorderPane borderPane = new BorderPane();
 
-        textLabel.setText("Save the changes?");
+        textLabel.setText(text);
         textLabel.setStyle("-fx-font-size: 15");
 
         borderPane.setCenter(textLabel);

@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.UUID;
 
 /**
  * @author Felix Mann
@@ -24,7 +25,7 @@ import java.io.FileNotFoundException;
  * @since 2020-Dezember-08
  */
 
-public class EditView {
+public class EditRecipeView {
 
     private static Recipe editRecipe;
     private static String param;
@@ -40,12 +41,13 @@ public class EditView {
     private static Separator separator;
 
     public static void display(Recipe editRecipe, MainFrame mainFrame, String param){
-        EditView.editRecipe = editRecipe;
-        EditView.param = param;
+        EditRecipeView.editRecipe = editRecipe;
+        EditRecipeView.param = param;
 
         init();
         initTextField();
-        setData();
+        if (param.equals("e")) setData();
+        else editRecipe = new Recipe();
 
         try {
             window.getIcons().add(new Image(new FileInputStream("C:\\Users\\Felix\\OneDrive\\Felix\\Privat\\Programmieren\\SatisfactoryCalculator\\src\\SatisfactoryCalculator\\img\\satisfactoryIcon.png")));
@@ -61,8 +63,14 @@ public class EditView {
         window.setAlwaysOnTop(true);
         window.centerOnScreen();
         window.showAndWait();
-
-        //TODO close only if nothing changed
+        window.setOnCloseRequest(event -> {
+            event.consume();
+            if (!hasChanged()) window.close();
+            else {
+                boolean answer = ConfirmView.display("Exit", "Do you want to exit?");
+                if (answer) window.close();
+            }
+        });
     }
 
     private static void init() {
@@ -106,6 +114,8 @@ public class EditView {
         deleteButton = new Button();
         separator = new Separator();
 
+        if (param.equals("a")) deleteButton.setVisible(false);
+
         setAction();
     }
 
@@ -120,10 +130,11 @@ public class EditView {
                 if (param.equals("a")) {
                     RecipeService.saveNew(getInputs());
                 } else if (hasChanged()) {
-                    RecipeService.saveChanges(getInputs());
+                    RecipeService.saveChanges(getInputs(), editRecipe.getRecipeUUID());
                 }
                 window.close();
             }
+            SectorView.updateRecipeList();
         });
         deleteButton.setOnAction(event -> {
             boolean answer = ConfirmView.display("Delete", "Delete this Recipe?");
@@ -132,17 +143,47 @@ public class EditView {
                 RecipeService.delete(editRecipe);
                 window.close();
             }
+            SectorView.updateRecipeList();
         });
     }
 
     private static void initTextField() {
-
+        outMatAmnt1.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")){
+                outMatAmnt1.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+        outMatAmnt2.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")){
+                outMatAmnt2.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+        inMatAmnt1.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")){
+                inMatAmnt1.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+        inMatAmnt2.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")){
+                inMatAmnt2.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+        inMatAmnt3.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")){
+                inMatAmnt3.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+        inMatAmnt4.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")){
+                inMatAmnt4.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
     }
 
     private static void setData(){
         nameInField.setText(editRecipe.getRecipeName());
-        if (editRecipe.getCraftTime() != 0) craftTimeIn.setText(String.valueOf(editRecipe.getCraftTime()));
-        if (editRecipe.isAltRecipe()) altRecipeButton.setSelected(true);
+        craftTimeIn.setText(String.valueOf(editRecipe.getCraftTime()));
+        altRecipeButton.setSelected(true);
         if (editRecipe.getBuildingUUID() != null){
             buildingField.setText(BuildingService.getBuildingByUUID(editRecipe.getBuildingUUID()).getBuildingName());
         }
@@ -318,6 +359,8 @@ public class EditView {
 
     private static Recipe getInputs(){
         Recipe recipe = new Recipe();
+
+        if (param.equals("a")) recipe.setRecipeUUID(UUID.randomUUID().toString());
 
         recipe.setRecipeName(nameInField.getText()); //TODO have to und nicht have to
         recipe.setCraftTime(craftTimeIn.getText());

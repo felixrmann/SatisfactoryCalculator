@@ -8,24 +8,20 @@ package SatisfactoryCalculator.Model;
 
 public class Orderer {
     private Recipe recipe;
-    private Double amount;
-    private Integer inset, position;
+    private Double requiredAmount, rate;
+    private Integer inNum, inset, position;
 
-    public Orderer(Recipe recipe, Integer inset, Integer position){
+    public Orderer(Recipe recipe, Integer inNum, Integer inset, Integer position){
         this.recipe = recipe;
+        this.inNum = inNum;
         this.inset = inset;
         this.position = position;
     }
 
-    public Orderer(Double amount, Integer inset, Integer position){
-        this.amount = amount;
-        this.inset = inset;
-        this.position = position;
-    }
-
-    public Orderer(Recipe recipe, Double amount, Integer inset, Integer position){
+    public Orderer(Recipe recipe, Double requiredAmount, Double rate, Integer inset, Integer position){
         this.recipe = recipe;
-        this.amount = amount;
+        this.requiredAmount = requiredAmount;
+        this.rate = rate;
         this.inset = inset;
         this.position = position;
     }
@@ -34,8 +30,16 @@ public class Orderer {
         return recipe;
     }
 
-    public Double getAmount() {
-        return amount;
+    public Integer getInNum() {
+        return inNum;
+    }
+
+    public Double getRequiredAmount() {
+        return requiredAmount;
+    }
+
+    public Double getRate() {
+        return rate;
     }
 
     public Integer getPosition() {

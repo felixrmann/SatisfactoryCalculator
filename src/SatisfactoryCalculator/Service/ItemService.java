@@ -64,10 +64,10 @@ public class ItemService {
         return allItem;
     }
 
-    public static Result saveChanges(Item item){
+    public static Result saveChanges(Item item, String itemUUID){
         String sqlQuery = "UPDATE item " +
                 "SET itemName='" + item.getItemName() + "', " +
-                "WHERE itemUUID='" + item.getItemUUID() + "'";
+                "WHERE itemUUID='" + itemUUID + "'";
         int rowsAffected = executeUpdate(sqlQuery);
 
         if (rowsAffected == 1) return Result.SUCCESS;
@@ -81,6 +81,16 @@ public class ItemService {
                 "VALUES " +
                 "('" + UUID.randomUUID().toString() + "', " +
                 "'" + item.getItemName() + "')";
+        int rowsAffected = executeUpdate(sqlQuery);
+
+        if (rowsAffected == 1) return Result.SUCCESS;
+        else if (rowsAffected == 0) return Result.NOACTION;
+        else return Result.ERROR;
+    }
+
+    public static Result delete(Item item){
+        String sqlQuery = "DELETE FROM item " +
+                "WHERE itemUUID='" + item.getItemUUID() + "'";
         int rowsAffected = executeUpdate(sqlQuery);
 
         if (rowsAffected == 1) return Result.SUCCESS;

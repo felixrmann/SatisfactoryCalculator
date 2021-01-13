@@ -8,7 +8,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.UUID;
 import java.util.Vector;
 
 /**
@@ -51,7 +50,7 @@ public class RecipeService {
         else return Result.ERROR;
     }
 
-    public static Result saveChanges(Recipe recipe){
+    public static Result saveChanges(Recipe recipe, String recipeUUID){
         String sqlQuery = "UPDATE recipe " +
                 "SET recipeName='" + recipe.getRecipeName() + "', " +
                 "outputMaterial1UUID='" + recipe.getOutputMaterial1UUID() + "', " +
@@ -68,8 +67,8 @@ public class RecipeService {
                 "inputMaterial3UUID='" + recipe.getInputMaterial3UUID() + "', " +
                 "inputMaterial3Amount='" + recipe.getInputMaterial3Amount() + "', " +
                 "inputMaterial4UUID='" + recipe.getInputMaterial4UUID() + "', " +
-                "inputMaterial4Amount='" + recipe.getInputMaterial4Amount() + "', " +
-                "WHERE recipeUUID='" + recipe.getRecipeUUID() + "'";
+                "inputMaterial4Amount='" + recipe.getInputMaterial4Amount() + "' " +
+                "WHERE recipeUUID='" + recipeUUID + "'";
         int rowsAffected = executeUpdate(sqlQuery);
 
         if (rowsAffected == 1) return Result.SUCCESS;
@@ -85,7 +84,7 @@ public class RecipeService {
                 "inputMaterial2Amount, inputMaterial3UUID, inputMaterial3Amount, inputMaterial4UUID, " +
                 "inputMaterial4Amount) " +
                 "VALUES " +
-                "('" + UUID.randomUUID().toString() + "', " +
+                "('" + recipe.getRecipeUUID() + "', " +
                 "'" + recipe.getRecipeName() + "', " +
                 "'" + recipe.getOutputMaterial1UUID() + "', " +
                 "'" + recipe.getOutputMaterial1Amount() + "', " +

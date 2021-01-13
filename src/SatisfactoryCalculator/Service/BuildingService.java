@@ -41,9 +41,19 @@ public class BuildingService {
         return 0;
     }
 
-    public static Result saveChanges(Building building){
+    public static Result saveChanges(Building building, String buildingUUID){
         String sqlQuery = "UPDATE building " +
                 "SET buildingName='" + building.getBuildingName() + "' " +
+                "WHERE buildingUUID='" + buildingUUID + "'";
+        int rowsAffected = executeUpdate(sqlQuery);
+
+        if (rowsAffected == 1) return Result.SUCCESS;
+        else if (rowsAffected == 0) return Result.NOACTION;
+        else return Result.ERROR;
+    }
+
+    public static Result delete(Building building){
+        String sqlQuery = "DELETE FROM building " +
                 "WHERE buildingUUID='" + building.getBuildingUUID() + "'";
         int rowsAffected = executeUpdate(sqlQuery);
 
@@ -64,6 +74,8 @@ public class BuildingService {
         else if (rowsAffected == 0) return Result.NOACTION;
         else return Result.ERROR;
     }
+
+
 
     public static Vector<Building> getAllBuilding(){
         Vector<Building> allBuildings = new Vector<>();

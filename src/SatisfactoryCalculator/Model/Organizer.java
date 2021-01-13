@@ -20,14 +20,18 @@ public class Organizer {
         Vector<Recipe> defaultRecipes = RecipeService.getAllDefaultRecipeOfItemByUUID(searchItem.getItemUUID());
         Recipe bestRecipe = getOptimalRecipe(defaultRecipes);
 
-        addRecipeToVector(bestRecipe, 0);
+        addRecipeToVector(bestRecipe, 1, 0);
         getInputRecipeOfRecipe(bestRecipe, 1);
 
+        /*
         for (Orderer orderer : allRecipe) {
             System.out.println("Pos: " + orderer.getPosition());
+            System.out.println("InNum: " + orderer.getInNum());
             System.out.println("Inset: " + orderer.getInset());
             System.out.println("Recipe: " + orderer.getRecipe().toString());
         }
+
+         */
 
         return allRecipe;
     }
@@ -36,14 +40,14 @@ public class Organizer {
         if (hasInputRecipe(recipe)){
             Vector<Recipe> temp1 = RecipeService.getAllDefaultRecipeOfItemByUUID(ItemService.getItemByUUID(recipe.getInputMaterial1UUID()).getItemUUID());
             Recipe optimalRecipe1 = getOptimalRecipe(temp1);
-            addRecipeToVector(optimalRecipe1, cnt);
+            addRecipeToVector(optimalRecipe1, 1, cnt);
             if (hasUnderRecipe(optimalRecipe1)){
                 getInputRecipeOfRecipe(optimalRecipe1, cnt + 1);
             }
             if (recipe.getInputMaterial2UUID() != null && !recipe.getInputMaterial2UUID().equals("None")){
                 Vector<Recipe> temp2 = RecipeService.getAllDefaultRecipeOfItemByUUID(ItemService.getItemByUUID(recipe.getInputMaterial2UUID()).getItemUUID());
                 Recipe optimalRecipe2 = getOptimalRecipe(temp2);
-                addRecipeToVector(optimalRecipe2, cnt);
+                addRecipeToVector(optimalRecipe2, 2, cnt);
                 if (hasUnderRecipe(optimalRecipe2)){
                     getInputRecipeOfRecipe(optimalRecipe2, cnt + 1);
                 }
@@ -51,7 +55,7 @@ public class Organizer {
             if (recipe.getInputMaterial3UUID() != null && !recipe.getInputMaterial3UUID().equals("None")){
                 Vector<Recipe> temp3 = RecipeService.getAllDefaultRecipeOfItemByUUID(ItemService.getItemByUUID(recipe.getInputMaterial3UUID()).getItemUUID());
                 Recipe optimalRecipe3 = getOptimalRecipe(temp3);
-                addRecipeToVector(optimalRecipe3, cnt);
+                addRecipeToVector(optimalRecipe3, 3, cnt);
                 if (hasUnderRecipe(optimalRecipe3)){
                     getInputRecipeOfRecipe(optimalRecipe3, cnt + 1);
                 }
@@ -59,7 +63,7 @@ public class Organizer {
             if (recipe.getInputMaterial4UUID() != null && !recipe.getInputMaterial4UUID().equals("None")){
                 Vector<Recipe> temp4 = RecipeService.getAllDefaultRecipeOfItemByUUID(ItemService.getItemByUUID(recipe.getInputMaterial4UUID()).getItemUUID());
                 Recipe optimalRecipe4 = getOptimalRecipe(temp4);
-                addRecipeToVector(optimalRecipe4, cnt);
+                addRecipeToVector(optimalRecipe4, 4, cnt);
                 if (hasUnderRecipe(optimalRecipe4)){
                     getInputRecipeOfRecipe(optimalRecipe4, cnt + 1);
                 }
@@ -67,8 +71,8 @@ public class Organizer {
         }
     }
 
-    private static void addRecipeToVector(Recipe recipe, Integer inset){
-        allRecipe.add(new Orderer(recipe, inset, globalCount));
+    private static void addRecipeToVector(Recipe recipe, Integer inNum, Integer inset){
+        allRecipe.add(new Orderer(recipe, inNum, inset, globalCount));
         globalCount++;
     }
 

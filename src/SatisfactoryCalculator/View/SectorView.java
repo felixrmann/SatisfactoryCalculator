@@ -1,7 +1,11 @@
 package SatisfactoryCalculator.View;
 
-import SatisfactoryCalculator.Controller.RecipeController;
+import SatisfactoryCalculator.Controller.SectorController;
+import SatisfactoryCalculator.Model.Building;
+import SatisfactoryCalculator.Model.Item;
 import SatisfactoryCalculator.Model.Recipe;
+import SatisfactoryCalculator.Service.BuildingService;
+import SatisfactoryCalculator.Service.ItemService;
 import SatisfactoryCalculator.Service.RecipeService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,12 +30,17 @@ public class SectorView extends BorderPane {
 
     private MainFrame mainFrame;
     private String sector;
-    private Recipe selectedRecipe;
-    private ListView<String> listView;
-    private Button editButton, backButton, addButton, exitButton;
+    private static Item selectedItem;
+    private static Recipe selectedRecipe;
+    private static Building selectedBuilding;
+    private static ListView<String> listView;
+    private static Button editButton;
+    private Button backButton;
+    private Button addButton;
+    private Button exitButton;
     private Separator separator;
     private Vector<Button> buttons;
-    private RecipeController recipeController;
+    private SectorController sectorController;
 
     public SectorView(MainFrame mainFrame, String sector){
         this.mainFrame = mainFrame;
@@ -46,45 +55,33 @@ public class SectorView extends BorderPane {
     }
 
     private void init() {
+        listView = new ListView<>();
         editButton = new Button();
         backButton = new Button();
         addButton = new Button();
         exitButton = new Button();
         separator = new Separator();
         buttons = new Vector<>();
-        recipeController = new RecipeController(mainFrame, buttons, this);
+        sectorController = new SectorController(mainFrame, buttons, this, sector);
 
         buttons.add(editButton);
         buttons.add(addButton);
         buttons.add(backButton);
         buttons.add(exitButton);
 
-        editButton.setOnAction(recipeController);
-        backButton.setOnAction(recipeController);
-        addButton.setOnAction(recipeController);
-        exitButton.setOnAction(recipeController);
+        editButton.setOnAction(sectorController);
+        backButton.setOnAction(sectorController);
+        addButton.setOnAction(sectorController);
+        exitButton.setOnAction(sectorController);
     }
 
     private VBox centerPart(){
-        Vector<Recipe> recipes = RecipeService.getAllRecipe();
-        Vector<String> recipeNames = new Vector<>();
-        for (Recipe recipe : recipes) {
-            recipeNames.add(recipe.getRecipeName());
-        }
-        ObservableList<String> recipeNameList = FXCollections.observableList(recipeNames);
-        listView = new ListView<>(recipeNameList);
-        listView.setPrefSize(600, 700);
-
-        VBox vBox = new VBox();
-        vBox.setPadding(new Insets(10,10,10,10));
-        vBox.getChildren().add(listView);
-
-        listView.setOnMouseClicked(mouseEvent -> {
-            selectedRecipe = recipes.get(listView.getSelectionModel().getSelectedIndex());
-            editButton.setVisible(true);
-        });
-
-        return vBox;
+        return switch (sector) {
+            case "item" -> loadItem();
+            case "recipe" -> loadRecipe();
+            case "building" -> loadBuilding();
+            default -> null;
+        };
     }
 
     private VBox botPart(){
@@ -109,7 +106,120 @@ public class SectorView extends BorderPane {
         return vBox;
     }
 
+    private VBox loadItem(){
+        Vector<Item> allItems = ItemService.getAllItem();
+        Vector<String> allItemNames = new Vector<>();
+        for (Item item: allItems) {
+            allItemNames.add(item.getItemName());
+        }
+        ObservableList<String> itemNameList = FXCollections.observableList(allItemNames);
+        listView.setItems(itemNameList);
+        listView.setPrefSize(600, 700);
+
+        VBox vBox = new VBox();
+        vBox.setPadding(new Insets(10,10,10,10));
+        vBox.getChildren().add(listView);
+
+        listView.setOnMouseClicked(mouseEvent -> {
+            selectedItem = allItems.get(listView.getSelectionModel().getSelectedIndex());
+            editButton.setVisible(true);
+        });
+        return vBox;
+    }
+
+    private VBox loadRecipe(){
+        Vector<Recipe> allRecipes = RecipeService.getAllRecipe();
+        Vector<String> allRecipeNames = new Vector<>();
+        for (Recipe recipe: allRecipes) {
+            allRecipeNames.add(recipe.getRecipeName());
+        }
+        ObservableList<String> recipeNameList = FXCollections.observableList(allRecipeNames);
+        listView.setItems(recipeNameList);
+        listView.setPrefSize(600, 700);
+
+        VBox vBox = new VBox();
+        vBox.setPadding(new Insets(10,10,10,10));
+        vBox.getChildren().add(listView);
+
+        listView.setOnMouseClicked(mouseEvent -> {
+            selectedRecipe = allRecipes.get(listView.getSelectionModel().getSelectedIndex());
+            editButton.setVisible(true);
+        });
+        return vBox;
+    }
+
+    private VBox loadBuilding(){
+        Vector<Building> allBuilding = BuildingService.getAllBuilding();
+        Vector<String> allBuildingNames = new Vector<>();
+        for (Building building: allBuilding) {
+            allBuildingNames.add(building.getBuildingName());
+        }
+        ObservableList<String> recipeNameList = FXCollections.observableList(allBuildingNames);
+        listView.setItems(recipeNameList);
+        listView.setPrefSize(600, 700);
+
+        VBox vBox = new VBox();
+        vBox.setPadding(new Insets(10,10,10,10));
+        vBox.getChildren().add(listView);
+
+        listView.setOnMouseClicked(mouseEvent -> {
+            selectedBuilding = allBuilding.get(listView.getSelectionModel().getSelectedIndex());
+            editButton.setVisible(true);
+        });
+        return vBox;
+    }
+
+    public Item getSelectedItem() {
+        return selectedItem;
+    }
+
     public Recipe getSelectedRecipe() {
         return selectedRecipe;
+    }
+
+    public Building getSelectedBuilding(){
+        return selectedBuilding;
+    }
+
+    public static void updateItemList(){
+        Vector<Item> allItems = ItemService.getAllItem();
+        Vector<String> allItemNames = new Vector<>();
+        for (Item item: allItems) {
+            allItemNames.add(item.getItemName());
+        }
+        ObservableList<String> itemNameList = FXCollections.observableList(allItemNames);
+        listView.setItems(itemNameList);
+        listView.setOnMouseClicked(mouseEvent -> {
+            selectedItem = allItems.get(listView.getSelectionModel().getSelectedIndex());
+            editButton.setVisible(true);
+        });
+    }
+
+    public static void updateRecipeList(){
+        Vector<Recipe> allRecipes = RecipeService.getAllRecipe();
+        Vector<String> allRecipeNames = new Vector<>();
+        for (Recipe recipe: allRecipes) {
+            allRecipeNames.add(recipe.getRecipeName());
+        }
+        ObservableList<String> recipeNameList = FXCollections.observableList(allRecipeNames);
+        listView.setItems(recipeNameList);
+        listView.setOnMouseClicked(mouseEvent -> {
+            selectedRecipe = allRecipes.get(listView.getSelectionModel().getSelectedIndex());
+            editButton.setVisible(true);
+        });
+    }
+
+    public static void updateBuildingList(){
+        Vector<Building> allBuilding = BuildingService.getAllBuilding();
+        Vector<String> allBuildingNames = new Vector<>();
+        for (Building building: allBuilding) {
+            allBuildingNames.add(building.getBuildingName());
+        }
+        ObservableList<String> recipeNameList = FXCollections.observableList(allBuildingNames);
+        listView.setItems(recipeNameList);
+        listView.setOnMouseClicked(mouseEvent -> {
+            selectedBuilding = allBuilding.get(listView.getSelectionModel().getSelectedIndex());
+            editButton.setVisible(true);
+        });
     }
 }

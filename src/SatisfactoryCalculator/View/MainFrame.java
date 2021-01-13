@@ -57,4 +57,8 @@ public class MainFrame extends Application {
     public Stage getStage(){
         return window;
     }
+
+    public void setSceneSize(double width, double height){
+        window.setScene(new Scene(window.getScene().getRoot() , width, height));
+    }
 }
