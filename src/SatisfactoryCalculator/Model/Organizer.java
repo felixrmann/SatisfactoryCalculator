@@ -13,25 +13,16 @@ import java.util.Vector;
 
 public class Organizer {
     private static int globalCount = 0;
-    private static Vector<Orderer> allRecipe = new Vector<>();
+    private static Vector<Orderer> allRecipe;
 
     public static Vector<Orderer> getAllRecipeOfMaterial(String itemName){
+        allRecipe = new Vector<>();
         Item searchItem = ItemService.getItemByName(itemName);
         Vector<Recipe> defaultRecipes = RecipeService.getAllDefaultRecipeOfItemByUUID(searchItem.getItemUUID());
         Recipe bestRecipe = getOptimalRecipe(defaultRecipes);
 
         addRecipeToVector(bestRecipe, 1, 0);
         getInputRecipeOfRecipe(bestRecipe, 1);
-
-        /*
-        for (Orderer orderer : allRecipe) {
-            System.out.println("Pos: " + orderer.getPosition());
-            System.out.println("InNum: " + orderer.getInNum());
-            System.out.println("Inset: " + orderer.getInset());
-            System.out.println("Recipe: " + orderer.getRecipe().toString());
-        }
-
-         */
 
         return allRecipe;
     }
@@ -69,6 +60,8 @@ public class Organizer {
                 }
             }
         }
+
+        //TODO save side products
     }
 
     private static void addRecipeToVector(Recipe recipe, Integer inNum, Integer inset){
@@ -78,22 +71,25 @@ public class Organizer {
 
     private static Recipe getOptimalRecipe(Vector<Recipe> tempVector){
         if (tempVector.size() != 0){
-            int outAmount = 0;
-            int inAmount = 0;
-            int pos = 0;
+            int optimalPosition = 0;
+            int leastInput = 10;
+            int leastOutput = 10;
             for (int i = 0; i < tempVector.size(); i++) {
-                int tempOut = getAmountOut(tempVector.get(i));
-                if (outAmount > tempOut) {
-                    pos = i;
-                    outAmount = tempOut;
-                    int tempIn = getAmountIn(tempVector.get(i));
-                    if (inAmount > tempIn) {
-                        inAmount = tempIn;
-                        pos = i;
-                    }
-                }
+                int currentLeastOutput = 0;
+                int currentLeastInput = 0;
+
+                if (!tempVector.get(i).getOutputMaterial1UUID().equals("None")) currentLeastOutput++;
+                if (!tempVector.get(i).getOutputMaterial2UUID().equals("None")) currentLeastOutput++;
+
+                if (!tempVector.get(i).getInputMaterial1UUID().equals("None")) currentLeastInput++;
+                if (!tempVector.get(i).getInputMaterial2UUID().equals("None")) currentLeastInput++;
+                if (!tempVector.get(i).getInputMaterial3UUID().equals("None")) currentLeastInput++;
+                if (!tempVector.get(i).getInputMaterial4UUID().equals("None")) currentLeastInput++;
+
+                if (currentLeastOutput < leastOutput) optimalPosition = i;
+                else if ((currentLeastInput < leastInput)) optimalPosition = i;
             }
-            return tempVector.get(pos);
+            return tempVector.get(optimalPosition);
         }
         return null;
     }
@@ -126,7 +122,7 @@ public class Organizer {
             if (RecipeService.isRecipe(recipe.getInputMaterial1UUID())) return true;
             if (RecipeService.isRecipe(recipe.getInputMaterial2UUID())) return true;
             if (RecipeService.isRecipe(recipe.getInputMaterial3UUID())) return true;
-            if (RecipeService.isRecipe(recipe.getInputMaterial4UUID())) return true;
+            return RecipeService.isRecipe(recipe.getInputMaterial4UUID());
         }
         return false;
     }
