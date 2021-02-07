@@ -23,20 +23,16 @@ import java.util.Vector;
 
 public class CalculateView extends BorderPane {
 
-    private MainFrame mainFrame;
-    private CalculateController calculateController;
+    private final MainFrame mainFrame;
     private AutoCompleteLogic autoCompleteLogic;
     private Separator separatorTop1, separatorTop2, separatorTop3;
     private Label itemLabel, amountLabel, overClockLabel, alternativeRecipeLabel;
     private RadioButton overclockButton, alternativeRecipeButton;
     private Button calculateButton, backButton, exitButton, selectItemButton;
-    private ComboBox<String> itemBox;
     private TabPane tabPane;
-    private TextField itemField, amountField;
-    private Vector<Button> buttons;
-    private Vector<Orderer> allRecipe;
-    private Vector<String> possibilities;
-    private ObservableList<String> observableList;
+    private TextField amountField;
+    private ObservableList<String> items;
+    private ComboBox<String> itemBox;
 
     public CalculateView(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -61,18 +57,15 @@ public class CalculateView extends BorderPane {
         exitButton = new Button();
         selectItemButton = new Button();
         tabPane = new TabPane();
-        itemField = new TextField();
         amountField = new TextField();
-        buttons = new Vector<>();
-        possibilities = new Vector<>();
-        observableList = FXCollections.observableList(possibilities);
-        itemBox = new ComboBox<>(observableList);
-        calculateController = new CalculateController(mainFrame, buttons, this);
+        Vector<Button> buttons = new Vector<>();
+        CalculateController calculateController = new CalculateController(mainFrame, buttons, this);
         autoCompleteLogic = new AutoCompleteLogic();
+        items = FXCollections.observableArrayList();
+        itemBox = new ComboBox<>(items);
 
-        //TODO remove this
-        itemField.setText("Reinforced Iron Plate");
-        amountField.setText("20");
+        itemBox.setEditable(true);
+        itemBox.getItems().addAll(autoCompleteLogic.getAllItemNames());
 
         buttons.add(calculateButton);
         buttons.add(backButton);
@@ -83,10 +76,6 @@ public class CalculateView extends BorderPane {
         exitButton.setOnAction(calculateController);
         calculateButton.setOnAction(calculateController);
         selectItemButton.setOnAction(calculateController);
-
-        itemBox.setEditable(true);
-        itemBox.getItems().setAll(autoCompleteLogic.getAllItemNames());
-        //TODO set height of dropdown
     }
 
     private VBox topPart() {
@@ -105,51 +94,37 @@ public class CalculateView extends BorderPane {
         calculateButton.setText("Calculate");
 
         ObservableList<Node> list1 = toolBar.getItems();
-        list1.addAll(itemLabel, itemField, separatorTop1, amountLabel, amountField, separatorTop2,
+        list1.addAll(itemLabel, itemBox, separatorTop1, amountLabel, amountField, separatorTop2,
                 overClockLabel, overclockButton, alternativeRecipeLabel, alternativeRecipeButton, separatorTop3, calculateButton);
 
         vBox.setSpacing(30);
         vBox.getChildren().addAll(toolBar);
 
-        itemField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\sa-zA-Z*")) {
-                itemField.setText(newValue.replaceAll("[^\\sa-zA-Z]", ""));
-            }
-        });
-
         itemBox.getEditor().textProperty().addListener((observableValue, oldValue, newValue) -> {
             addItemsToComboBox(autoCompleteLogic.getAllSuggestions(newValue));
         });
 
-        //TODO only numbers and one point
-
-        /*
-        amountField.textProperty().addListener((observable, oldValue, newValue) -> {
-            String text = oldValue + newValue;
-            if (!text.matches("\\d*\\.?")){
-                amountField.setText(text.substring(0, text.length() - 1));
-            }
-        });
-         */
-
         return vBox;
     }
 
-    public void centerPart(Vector<Orderer> allRecipe) {
-        this.allRecipe = null;
-        this.allRecipe = allRecipe;
-
+    public void setTabPane(Vector<Orderer> allRecipe) {
         tabPane = new TabPane();
         tabPane.getTabs().removeAll();
-        tabPane.getTabs().add(treeShow());
-        tabPane.getTabs().add(cumulateView());
+
+        tabPane.getTabs().add(treeShow(allRecipe));
+        tabPane.getTabs().add(cumulateView(allRecipe));
 
         setCenter(tabPane);
     }
 
-    private Tab treeShow(){
+    public void addTabToTabPane(Vector<Orderer> allRecipe) {
+        tabPane.getTabs().add(treeShow(allRecipe));
+        tabPane.getTabs().add(cumulateView(allRecipe));
+    }
+
+    private Tab treeShow(Vector<Orderer> allRecipe) {
         Tab tab = new Tab();
-        tab.setText("Tree - View");
+        tab.setText("T-V " + allRecipe.get(0).getRecipe().getRecipeName());
 
         GridPane pane = new GridPane();
         pane.setHgap(10);
@@ -166,43 +141,49 @@ public class CalculateView extends BorderPane {
             pane.add(label2, allRecipe.get(i).getInset() + 1, i);
             String text3 = "Building: " +
                     allRecipe.get(i).getBuildingName() + " " +
-                    allRecipe.get(i).getBuildingAmount();
+                    Math.round(allRecipe.get(i).getBuildingAmount() * 100.0) / 100.0;
             Label label3 = new Label(text3);
             pane.add(label3, allRecipe.get(i).getInset() + 2, i);
         }
 
         VBox vBox = new VBox(pane);
         ScrollPane scrollPane = new ScrollPane(vBox);
-        scrollPane.setPadding(new Insets(10,10,10,10));
+        scrollPane.setPadding(new Insets(10, 10, 10, 10));
 
         tab.setContent(scrollPane);
         tab.setClosable(false);
         return tab;
     }
 
-    private Tab cumulateView(){
+    private Tab cumulateView(Vector<Orderer> allRecipe) {
         Tab tab = new Tab();
-        tab.setText("Cumulated Numbers");
+        tab.setText("Cal Num " + allRecipe.get(0).getRecipe().getRecipeName());
 
         Cumulator cumulator = new Cumulator();
         Vector<Orderer> cumulatedVector = cumulator.cumulator(allRecipe);
 
+
         GridPane pane = new GridPane();
-        pane.setHgap(10);
+        pane.setHgap(30);
         pane.setVgap(10);
 
+        Label topLabel1 = new Label("Recipe");
+        Label topLabel2 = new Label("Amount");
+        pane.add(topLabel1, 0, 0);
+        pane.add(topLabel2, 1, 0);
+
         for (int i = 0; i < cumulatedVector.size(); i++) {
-            String text1 = "Recipe: " + cumulatedVector.get(i).getRecipe().getRecipeName() + "   ";
+            String text1 = cumulatedVector.get(i).getRecipe().getRecipeName() + "   ";
             Label label1 = new Label(text1);
-            pane.add(label1, 0, i);
-            String text2 = "Amount: " + Math.ceil(cumulatedVector.get(i).getAmount());
+            pane.add(label1, 0, i + 1);
+            String text2 = "" + Math.ceil(cumulatedVector.get(i).getAmount());
             Label label2 = new Label(text2);
-            pane.add(label2, 1, i);
+            pane.add(label2, 1, i + 1);
         }
 
         VBox vBox = new VBox(pane);
         ScrollPane scrollPane = new ScrollPane(vBox);
-        scrollPane.setPadding(new Insets(10,10,10,10));
+        scrollPane.setPadding(new Insets(10, 10, 10, 10));
 
         tab.setContent(scrollPane);
         tab.setClosable(false);
@@ -226,25 +207,19 @@ public class CalculateView extends BorderPane {
     }
 
     public String getItemFieldText() {
-        return itemField.getText();
+        return itemBox.getValue();
     }
 
     public String getAmountFieldText() {
         return amountField.getText();
     }
 
-    public int getMaxInset(Vector<Orderer> allRecipe) {
-        int maxInset = allRecipe.get(0).getInset();
-        for (Orderer orderer : allRecipe) {
-            if (maxInset < orderer.getInset()) maxInset = orderer.getInset();
-        }
-        return maxInset;
+    public boolean getAltEnabled() {
+        return alternativeRecipeButton.isSelected();
     }
 
-    public void addItemsToComboBox(Vector<String> allSuggestions){
-        itemBox.getItems().clear();
-        for (String s : allSuggestions){
-            itemBox.getItems().add(s);
-        }
+    private void addItemsToComboBox(Vector<String> allRecipes){
+        items.clear();
+        items.addAll(allRecipes);
     }
 }

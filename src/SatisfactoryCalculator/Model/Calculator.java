@@ -22,6 +22,7 @@ public class Calculator {
 
     public Vector<Orderer> getRecipeAmount(Vector<Orderer> allRecipe, Double amountPerMinute) {
         calculatedOfRecipe.removeAllElements();
+        this.allRecipe = null;
         this.allRecipe = allRecipe;
         this.amountPerMinute = amountPerMinute;
 
@@ -48,7 +49,7 @@ public class Calculator {
             int position = allRecipe.get(i).getPosition();
             String buildingName = BuildingService.getBuildingByUUID(tempRecipe.getBuildingUUID()).getBuildingName();
             if (buildingName == null) buildingName = "Miner";
-            Double buildingAmount = requiredAmount / tempRecipe.getOutputMaterial1Amount();
+            double buildingAmount = requiredAmount / tempRecipe.getOutputMaterial1Amount();
             calculatedOfRecipe.add(new Orderer(tempRecipe, requiredAmount, rate, inset, position, buildingName, buildingAmount));
         }
     }

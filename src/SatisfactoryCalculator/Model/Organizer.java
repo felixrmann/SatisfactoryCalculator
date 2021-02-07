@@ -15,14 +15,25 @@ public class Organizer {
     private static int globalCount = 0;
     private static Vector<Orderer> allRecipe;
 
-    public static Vector<Orderer> getAllRecipeOfMaterial(String itemName){
+    public static Vector<Orderer> getAllRecipeOfItem(Item item){
+        globalCount = 0;
         allRecipe = new Vector<>();
-        Item searchItem = ItemService.getItemByName(itemName);
-        Vector<Recipe> defaultRecipes = RecipeService.getAllDefaultRecipeOfItemByUUID(searchItem.getItemUUID());
+
+        Vector<Recipe> defaultRecipes = RecipeService.getAllDefaultRecipeOfItemByUUID(item.getItemUUID());
         Recipe bestRecipe = getOptimalRecipe(defaultRecipes);
 
         addRecipeToVector(bestRecipe, 1, 0);
         getInputRecipeOfRecipe(bestRecipe, 1);
+
+        return allRecipe;
+    }
+
+    public static Vector<Orderer> getAllRecipeOfRecipe(Recipe recipe){
+        globalCount = 0;
+        allRecipe = new Vector<>();
+
+        addRecipeToVector(recipe, 1, 0);
+        getInputRecipeOfRecipe(recipe, 1);
 
         return allRecipe;
     }

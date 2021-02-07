@@ -12,12 +12,9 @@ public class Orderer {
     private Double requiredAmount, rate, amount, buildingAmount;
     private Integer inNum, inset, position;
 
-    public Orderer(){}
-
     public Orderer(Recipe recipe, Double amount){
         this.recipe = recipe;
         this.amount = amount;
-        this.inset = inset;
     }
 
     public Orderer(Recipe recipe, Integer inNum, Integer inset, Integer position){
