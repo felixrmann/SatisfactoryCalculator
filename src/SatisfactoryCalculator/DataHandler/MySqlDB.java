@@ -1,7 +1,6 @@
 package SatisfactoryCalculator.DataHandler;
 
 import java.sql.*;
-import java.util.Map;
 
 /**
  * @author Felix Mann
@@ -33,43 +32,12 @@ public class MySqlDB {
         return connection;
     }
 
-    public static synchronized ResultSet sqlSelect(String sqlQuery) throws SQLException{
-        return sqlSelect(sqlQuery, null);
-    }
-
-    public static synchronized ResultSet sqlSelect(String sqlQuery, Map<Integer, String> values) throws SQLException{
-        try {
-
-            if (values != null){
-                setValues(values);
-            }
-            int affectedRows = getPrepStmt().executeUpdate();
-            if (affectedRows <= 2){
-                return null;
-            } else if (affectedRows == 0) {
-                return null;
-            } else {
-                return null;
-            }
-        } catch (SQLException ex){
-            throw ex;
-        } finally {
-            sqlClose();
-        }
-    }
-
     public static void sqlClose() {
         try {
             if (getResultSet() != null) getResultSet().close();
             if (getPrepStmt() != null) getPrepStmt().close();
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
-        }
-    }
-
-    private static void setValues(Map<Integer, String> values) throws SQLException {
-        for (Integer i = 1; values.containsKey(i); i++){
-            getPrepStmt().setString(i, values.get(i));
         }
     }
 

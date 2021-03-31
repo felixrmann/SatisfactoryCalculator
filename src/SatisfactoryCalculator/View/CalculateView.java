@@ -9,9 +9,8 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 import java.util.Vector;
 
@@ -26,9 +25,9 @@ public class CalculateView extends BorderPane {
     private final MainFrame mainFrame;
     private AutoCompleteLogic autoCompleteLogic;
     private Separator separatorTop1, separatorTop2, separatorTop3;
-    private Label itemLabel, amountLabel, overClockLabel, alternativeRecipeLabel;
-    private RadioButton overclockButton, alternativeRecipeButton;
-    private Button calculateButton, backButton, exitButton, selectItemButton;
+    private Label itemLabel, amountLabel, alternativeRecipeLabel;
+    private RadioButton alternativeRecipeButton;
+    private Button calculateButton, backButton, exitButton;
     private TabPane tabPane;
     private TextField amountField;
     private ObservableList<String> items;
@@ -48,14 +47,11 @@ public class CalculateView extends BorderPane {
         separatorTop3 = new Separator();
         itemLabel = new Label();
         amountLabel = new Label();
-        overClockLabel = new Label();
         alternativeRecipeLabel = new Label();
-        overclockButton = new RadioButton();
         alternativeRecipeButton = new RadioButton();
         calculateButton = new Button();
         backButton = new Button();
         exitButton = new Button();
-        selectItemButton = new Button();
         tabPane = new TabPane();
         amountField = new TextField();
         Vector<Button> buttons = new Vector<>();
@@ -70,38 +66,47 @@ public class CalculateView extends BorderPane {
         buttons.add(calculateButton);
         buttons.add(backButton);
         buttons.add(exitButton);
-        buttons.add(selectItemButton);
 
         backButton.setOnAction(calculateController);
         exitButton.setOnAction(calculateController);
         calculateButton.setOnAction(calculateController);
-        selectItemButton.setOnAction(calculateController);
     }
 
     private VBox topPart() {
         VBox vBox = new VBox();
         ToolBar toolBar = new ToolBar();
 
-        separatorTop1.setPrefWidth(0);
-        separatorTop2.setPrefWidth(0);
-        separatorTop3.setPrefWidth(0);
+        separatorTop1.setPrefWidth(25);
+        separatorTop1.setVisible(false);
+        separatorTop2.setPrefWidth(25);
+        separatorTop2.setVisible(false);
+        separatorTop3.setPrefWidth(50);
+        separatorTop3.setVisible(false);
 
         itemLabel.setText("Item: ");
+        itemLabel.setStyle("-fx-font-size: 15");
         amountLabel.setText("Amount: ");
-        overClockLabel.setText("optimize overclock: ");
+        amountLabel.setStyle("-fx-font-size: 15");
         alternativeRecipeLabel.setText("alternative Recipe: ");
-        selectItemButton.setText("");
+        alternativeRecipeLabel.setStyle("-fx-font-size: 15");
+
         calculateButton.setText("Calculate");
+        calculateButton.setStyle("-fx-font-size: 15");
+
+        itemBox.setStyle("-fx-font-size: 15");
+        amountField.setStyle("-fx-font-size: 15");
 
         ObservableList<Node> list1 = toolBar.getItems();
         list1.addAll(itemLabel, itemBox, separatorTop1, amountLabel, amountField, separatorTop2,
-                overClockLabel, overclockButton, alternativeRecipeLabel, alternativeRecipeButton, separatorTop3, calculateButton);
+                alternativeRecipeLabel, alternativeRecipeButton, separatorTop3, calculateButton);
 
         vBox.setSpacing(30);
         vBox.getChildren().addAll(toolBar);
+        toolBar.setBackground(new Background(new BackgroundFill(Color.rgb(160,160,160), CornerRadii.EMPTY, Insets.EMPTY)));
+        toolBar.setPadding(new Insets(10,5,10,5));
 
         itemBox.getEditor().textProperty().addListener((observableValue, oldValue, newValue) -> {
-            addItemsToComboBox(autoCompleteLogic.getAllSuggestions(newValue));
+            addItemsToComboBox(autoCompleteLogic.getAllItemSuggestions(newValue));
         });
 
         return vBox;
@@ -110,6 +115,8 @@ public class CalculateView extends BorderPane {
     public void setTabPane(Vector<Orderer> allRecipe) {
         tabPane = new TabPane();
         tabPane.getTabs().removeAll();
+        tabPane.setPadding(new Insets(10,10,10,10));
+        tabPane.setBackground(new Background(new BackgroundFill(Color.rgb(181,181,181), CornerRadii.EMPTY, Insets.EMPTY)));
 
         tabPane.getTabs().add(treeShow(allRecipe));
         tabPane.getTabs().add(cumulateView(allRecipe));
@@ -131,19 +138,7 @@ public class CalculateView extends BorderPane {
         pane.setVgap(10);
 
         for (int i = 0; i < allRecipe.size(); i++) {
-            String text1 = "Recipe: " +
-                    allRecipe.get(i).getRecipe().getRecipeName() + "   ";
-            Label label1 = new Label(text1);
-            pane.add(label1, allRecipe.get(i).getInset(), i);
-            String text2 = "Amount: " +
-                    Math.ceil(allRecipe.get(i).getRequiredAmount());
-            Label label2 = new Label(text2);
-            pane.add(label2, allRecipe.get(i).getInset() + 1, i);
-            String text3 = "Building: " +
-                    allRecipe.get(i).getBuildingName() + " " +
-                    Math.round(allRecipe.get(i).getBuildingAmount() * 100.0) / 100.0;
-            Label label3 = new Label(text3);
-            pane.add(label3, allRecipe.get(i).getInset() + 2, i);
+            pane.add(createItemBoxTree(allRecipe.get(i)), 0, i);
         }
 
         VBox vBox = new VBox(pane);
@@ -167,18 +162,12 @@ public class CalculateView extends BorderPane {
         pane.setHgap(30);
         pane.setVgap(10);
 
-        Label topLabel1 = new Label("Recipe");
-        Label topLabel2 = new Label("Amount");
+        Label topLabel1 = new Label("Amount & ItemName");
+        topLabel1.setStyle("-fx-font-size: 20");
         pane.add(topLabel1, 0, 0);
-        pane.add(topLabel2, 1, 0);
 
         for (int i = 0; i < cumulatedVector.size(); i++) {
-            String text1 = cumulatedVector.get(i).getRecipe().getRecipeName() + "   ";
-            Label label1 = new Label(text1);
-            pane.add(label1, 0, i + 1);
-            String text2 = "" + Math.ceil(cumulatedVector.get(i).getAmount());
-            Label label2 = new Label(text2);
-            pane.add(label2, 1, i + 1);
+            pane.add(createItemBoxCumulated(cumulatedVector.get(i)), 0, i + 1);
         }
 
         VBox vBox = new VBox(pane);
@@ -195,13 +184,17 @@ public class CalculateView extends BorderPane {
         ToolBar toolBar = new ToolBar();
 
         backButton.setText("Back");
+        backButton.setStyle("-fx-font-size: 15");
         exitButton.setText("Exit");
+        exitButton.setStyle("-fx-font-size: 15");
 
         ObservableList<Node> list2 = toolBar.getItems();
         list2.addAll(backButton, exitButton);
 
         vBox.setSpacing(30);
         vBox.getChildren().addAll(toolBar);
+        toolBar.setBackground(new Background(new BackgroundFill(Color.rgb(160,160,160), CornerRadii.EMPTY, Insets.EMPTY)));
+        toolBar.setPadding(new Insets(10,5,10,5));
 
         return vBox;
     }
@@ -221,5 +214,46 @@ public class CalculateView extends BorderPane {
     private void addItemsToComboBox(Vector<String> allRecipes){
         items.clear();
         items.addAll(allRecipes);
+    }
+
+    private VBox createItemBoxTree(Orderer orderer){
+        VBox vBox = new VBox();
+        ToolBar toolBar = new ToolBar();
+
+        String text = "\t\t".repeat(Math.max(0, orderer.getInset())) +
+                Math.ceil(orderer.getRequiredAmount()) +
+                "x \t" + orderer.getRecipe().getRecipeName() +
+                ",  " + orderer.getBuildingName() +
+                " : " + Math.round(orderer.getBuildingAmount() * 100.0) / 100.0;
+        Label textLabel = new Label(text);
+
+        ObservableList<Node> list = toolBar.getItems();
+        list.add(textLabel);
+
+        textLabel.setStyle("-fx-font-size: 15");
+        vBox.getChildren().addAll(toolBar);
+        toolBar.setBackground(new Background(new BackgroundFill(Color.rgb(245,245,245), CornerRadii.EMPTY, Insets.EMPTY)));
+        toolBar.setPadding(new Insets(3,3,3,3));
+
+        return vBox;
+    }
+
+    private VBox createItemBoxCumulated(Orderer orderer){
+        VBox vBox = new VBox();
+        ToolBar toolBar = new ToolBar();
+
+        String text = "" + Math.ceil(orderer.getAmount()) + "x \t\t" +
+                orderer.getRecipe().getRecipeName();
+        Label textLabel = new Label(text);
+
+        ObservableList<Node> list = toolBar.getItems();
+        list.add(textLabel);
+
+        textLabel.setStyle("-fx-font-size: 15");
+        vBox.getChildren().addAll(toolBar);
+        toolBar.setBackground(new Background(new BackgroundFill(Color.rgb(245,245,245), CornerRadii.EMPTY, Insets.EMPTY)));
+        toolBar.setPadding(new Insets(3,3,3,3));
+
+        return vBox;
     }
 }

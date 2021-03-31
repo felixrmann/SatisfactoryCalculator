@@ -9,7 +9,7 @@ import javafx.application.Application;
  * @since 2020-November-13
  */
 
-public class ViewTest {
+public class SatisfactoryCalculator {
     public static void main(String[] args) {
         new Thread(() -> Application.launch(MainFrame.class)).start();
     }

@@ -20,9 +20,9 @@ import java.util.Vector;
 
 public class CalculateController implements EventHandler<ActionEvent> {
 
-    private MainFrame mainFrame;
-    private Vector<Button> buttons;
-    private CalculateView calculateView;
+    private final MainFrame mainFrame;
+    private final Vector<Button> buttons;
+    private final CalculateView calculateView;
 
     public CalculateController(MainFrame mainFrame, Vector<Button> buttons, CalculateView calculateView){
         this.mainFrame = mainFrame;
@@ -33,10 +33,14 @@ public class CalculateController implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent event) {
         if (buttons.get(0).equals(event.getSource())) {
-            if (!calculateView.getAmountFieldText().equals("") && !calculateView.getItemFieldText().equals("") && !calculateView.getAltEnabled()){
-                getNormalRecipe();
-            } else if (calculateView.getAltEnabled()){
-                getAllRecipe();
+            if (!calculateView.getAmountFieldText().equals("") && !calculateView.getItemFieldText().equals("")){
+                if (isValidItem(calculateView.getItemFieldText())){
+                    if (!calculateView.getAltEnabled()){
+                        getNormalRecipe();
+                    } else if (calculateView.getAltEnabled()){
+                        getAllRecipe();
+                    }
+                }
             }
         }
         else if (buttons.get(1).equals(event.getSource())) mainFrame.setNewScene(new MenuView(mainFrame), 350, 429);
@@ -64,5 +68,19 @@ public class CalculateController implements EventHandler<ActionEvent> {
                 calculateView.addTabToTabPane(tempVector);
             }
         }
+    }
+
+    private boolean isValidItem(String itemInput){
+        boolean output = false;
+        Vector<Item> allItems = ItemService.getAllItem();
+
+        for (Item item : allItems){
+            if (item.getItemName().equals(itemInput)) {
+                output = true;
+                break;
+            }
+        }
+
+        return output;
     }
 }

@@ -75,8 +75,6 @@ public class BuildingService {
         else return Result.ERROR;
     }
 
-
-
     public static Vector<Building> getAllBuilding(){
         Vector<Building> allBuildings = new Vector<>();
         String sqlQuery = "SELECT buildingUUID, buildingName FROM building";

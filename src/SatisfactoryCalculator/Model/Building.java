@@ -16,12 +16,6 @@ public class Building {
 
     }
 
-    public Building(String buildingUUID, String buildingName){
-        this.buildingUUID = buildingUUID;
-        this.buildingName = buildingName;
-        clockSpeedInPercent = 100;
-    }
-
     public String getBuildingUUID() {
         return buildingUUID;
     }
@@ -36,14 +30,6 @@ public class Building {
 
     public void setBuildingName(String buildingName) {
         this.buildingName = buildingName;
-    }
-
-    public Integer getClockSpeedInPercent() {
-        return clockSpeedInPercent;
-    }
-
-    public void setClockSpeedInPercent(Integer clockSpeedInPercent) {
-        this.clockSpeedInPercent = clockSpeedInPercent;
     }
 
     public String toString(){

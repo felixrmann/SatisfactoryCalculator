@@ -71,8 +71,6 @@ public class Organizer {
                 }
             }
         }
-
-        //TODO save side products
     }
 
     private static void addRecipeToVector(Recipe recipe, Integer inNum, Integer inset){
@@ -103,29 +101,6 @@ public class Organizer {
             return tempVector.get(optimalPosition);
         }
         return null;
-    }
-
-    private static int getAmountIn(Recipe recipe){
-        int cnt = 0;
-        if (!recipe.getInputMaterial1UUID().equals("None")){
-            cnt++;
-            if (!recipe.getInputMaterial2UUID().equals("None")){
-                cnt++;
-                if (!recipe.getInputMaterial3UUID().equals("None")){
-                    cnt++;
-                    if (!recipe.getInputMaterial4UUID().equals("None")){
-                        cnt++;
-                    }
-                }
-            }
-        }
-        return cnt;
-    }
-
-    private static int getAmountOut(Recipe recipe){
-        int cnt = 1;
-        if (!recipe.getOutputMaterial2UUID().equals("None")) cnt++;
-        return cnt;
     }
 
     private static boolean hasInputRecipe(Recipe recipe){

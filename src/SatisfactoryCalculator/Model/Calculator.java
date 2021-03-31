@@ -32,13 +32,15 @@ public class Calculator {
     }
 
     private void calculateNumbers() {
+        String building1Name = BuildingService.getBuildingByUUID(allRecipe.get(0).getRecipe().getBuildingUUID()).getBuildingName();
+        if (building1Name == null) building1Name = "Miner";
         calculatedOfRecipe.add(new Orderer(
                 allRecipe.get(0).getRecipe(),
                 amountPerMinute,
                 getRate(allRecipe.get(0).getRecipe(), amountPerMinute),
                 allRecipe.get(0).getInset(),
                 allRecipe.get(0).getPosition(),
-                BuildingService.getBuildingByUUID(allRecipe.get(0).getRecipe().getBuildingUUID()).getBuildingName(),
+                building1Name,
                 amountPerMinute / allRecipe.get(0).getRecipe().getOutputMaterial1Amount()));
         for (int i = 1; i < allRecipe.size(); i++) {
             Orderer bos = calculatedOfRecipe.get(getBos(allRecipe.get(i)));
@@ -79,8 +81,7 @@ public class Calculator {
                     subtract++;
                 }
             }
-        } catch (ArrayIndexOutOfBoundsException ignored) {
-        }
+        } catch (ArrayIndexOutOfBoundsException ignored) { }
         return 0;
     }
 }
