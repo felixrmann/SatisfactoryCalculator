@@ -48,7 +48,7 @@ public class EditItemView {
             e.printStackTrace();
         }
         if (editItem.getItemName() != null) window.setTitle("Edit Window of " + editItem.getItemName());
-        else window.setTitle("Edit Window of new Building");
+        else window.setTitle("Edit Window of new Item");
         window.setScene(new Scene(windowContent(), 260, 80));
         window.setResizable(false);
         window.initOwner(mainFrame.getStage());
